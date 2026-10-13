@@ -62,9 +62,11 @@ jobs:
 
       - name: Show signing certificate fingerprint (public info, not a secret)
         run: |
-          APKSIGNER=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner
-          "$APKSIGNER" verify --print-certs android/app/build/outputs/apk/release/app-release.apk | grep -E "Signer #1 certificate (DN|SHA-256)"
-          echo "debug.keystore sha256sum:"
+          APK=android/app/build/outputs/apk/release/app-release.apk
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)
+          echo "Using build-tools: $BT"
+          "${BT}apksigner" verify --print-certs "$APK"
+          echo "debug.keystore file SHA-256:"
           sha256sum android/app/debug.keystore
 
       - name: Upload APK artifact
