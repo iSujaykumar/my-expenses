@@ -1,24 +1,20 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { BudgetBar } from "../../components/BudgetBar";
 import { EmptyState } from "../../components/EmptyState";
 import { Fab } from "../../components/Fab";
 import { TransactionRow } from "../../components/TransactionRow";
 import { useRepositories } from "../../db/DatabaseProvider";
-import { SpendingSummary, TransactionWithDetails } from "../../repo/transactions";
 import { useDataVersion } from "../../state/dataEvents";
 import { useTheme } from "../../theme/useTheme";
-import { compareWithPreviousMonth, monthLabel, monthOf, monthRange, previousMonth, todayLocal } from "../../utils/date";
+import { addMonths, monthLabel, monthOf, todayLocal, YearMonth } from "../../utils/date";
 import { formatPaise } from "../../utils/money";
-
-interface HomeData {
-  month: SpendingSummary;
-  previousTotal: number;
-  recent: TransactionWithDetails[];
-  totalEver: number;
-}
+import { CategoryBreakdown } from "../dashboard/CategoryBreakdown";
+import { DashboardData, loadDashboard } from "../dashboard/loadDashboard";
 
 export function HomeScreen() {
   const repos = useRepositories();
@@ -26,23 +22,17 @@ export function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { colors, spacing, radii, type } = useTheme();
   const dataVersion = useDataVersion();
-  const [data, setData] = useState<HomeData | null>(null);
-  const [error, setError] = useState(false);
   const today = todayLocal();
-  const ym = monthOf(today);
+  const [month, setMonth] = useState<YearMonth>(() => monthOf(todayLocal()));
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    const prev = previousMonth(ym);
-    Promise.all([
-      repos.transactions.summary({ range: monthRange(ym.year, ym.month) }),
-      repos.transactions.totalSpending(monthRange(prev.year, prev.month)),
-      repos.transactions.list({ limit: 5, sort: "date_desc" }),
-      repos.transactions.count(),
-    ])
-      .then(([month, previousTotal, recent, totalEver]) => {
+    loadDashboard(repos, month, today)
+      .then((d) => {
         if (!cancelled) {
-          setData({ month, previousTotal, recent, totalEver });
+          setData(d);
           setError(false);
         }
       })
@@ -52,52 +42,152 @@ export function HomeScreen() {
     return () => {
       cancelled = true;
     };
-    // ym is derived from today; re-run when the day changes or data changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repos, dataVersion, today]);
+  }, [repos, month, today, dataVersion]);
 
   const open = useCallback((id: string) => router.push({ pathname: "/expense/[id]", params: { id } }), [router]);
-  const comparison = data ? compareWithPreviousMonth(ym, data.month.totalPaise, data.previousTotal) : null;
+  const isCurrent = month.year === monthOf(today).year && month.month === monthOf(today).month;
+  const shown = data && data.month.year === month.year && data.month.month === month.month ? data : null;
+
+  const card = (children: ReactNode, title?: string, action?: ReactNode) => (
+    <View style={{ marginHorizontal: spacing.lg, marginBottom: spacing.md, padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}>
+      {title ? (
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.sm }}>
+          <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.bodyLarge, fontWeight: "700" }}>{title}</Text>
+          {action}
+        </View>
+      ) : null}
+      {children}
+    </View>
+  );
+  const link = (label: string, onPress: () => void) => (
+    <Pressable accessibilityRole="button" hitSlop={10} onPress={onPress}>
+      <Text style={{ color: colors.primary, fontWeight: "700" }}>{label}</Text>
+    </Pressable>
+  );
+  const stat = (label: string, value: string) => (
+    <View style={{ flex: 1 }}>
+      <Text style={{ color: colors.textMuted, fontSize: type.caption }}>{label}</Text>
+      <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "700", marginTop: 2 }}>{value}</Text>
+    </View>
+  );
+
+  let content: ReactNode;
+  if (error) {
+    content = <EmptyState icon="alert-circle-outline" title="Could not load" message="Please reopen the app." />;
+  } else if (!shown) {
+    content = <ActivityIndicator style={{ marginTop: spacing.xxl }} size="large" color={colors.primary} />;
+  } else if (shown.totalEver === 0) {
+    content = (
+      <EmptyState
+        icon="wallet-outline"
+        title="Welcome to Meow"
+        message="Your spending summary, category chart and budgets will appear here. Start by adding your first expense."
+        actionLabel="Add your first expense"
+        onAction={() => router.push("/expense/new")}
+      />
+    );
+  } else {
+    const d = shown;
+    content = (
+      <>
+        {card(
+          <>
+            <Text style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "600" }}>Spent in {monthLabel(month)}</Text>
+            <Text style={{ color: colors.text, fontSize: type.display, fontWeight: "700", marginTop: spacing.xs }}>{formatPaise(d.summary.totalPaise)}</Text>
+            {d.summary.pendingCount ? (
+              <Text style={{ color: colors.warning, fontSize: type.small, marginTop: 2 }}>Includes {formatPaise(d.summary.pendingPaise)} pending</Text>
+            ) : null}
+            <Text style={{ color: colors.textMuted, fontSize: type.small, marginTop: spacing.xs }}>{d.comparison.label}</Text>
+            <View style={{ flexDirection: "row", marginTop: spacing.lg }}>
+              {stat("Expenses", String(d.summary.count))}
+              {stat(d.average.label, d.average.averagePaise === null ? "-" : formatPaise(d.average.averagePaise))}
+            </View>
+            <View style={{ flexDirection: "row", marginTop: spacing.md }}>
+              {stat(isCurrent ? `${month.year} so far` : `Total in ${month.year}`, formatPaise(d.yearTotalPaise))}
+              {stat("Refunded (not counted)", d.summary.refundedCount ? formatPaise(d.summary.refundedPaise) : "None")}
+            </View>
+          </>,
+        )}
+
+        {d.budgets.length > 0
+          ? card(
+              d.budgets.map((b) => (
+                <BudgetBar
+                  key={b.budget.id}
+                  title={b.budget.scope === "overall" ? "Overall" : (b.categoryName ?? "Category")}
+                  color={b.categoryColor}
+                  spentPaise={b.spentPaise}
+                  budgetPaise={b.budget.monthlyAmountPaise}
+                  percentUsed={b.percentUsed}
+                  level={b.level}
+                />
+              )),
+              "Budgets",
+              link("Manage", () => router.push("/settings/budgets")),
+            )
+          : card(
+              <Text style={{ color: colors.textMuted, fontSize: type.body }}>Set a monthly budget to see how much is left.</Text>,
+              "Budgets",
+              link("Set up", () => router.push("/settings/budgets")),
+            )}
+
+        {card(
+          d.categories.length === 0 ? (
+            <Text style={{ color: colors.textMuted, fontSize: type.body }}>No spending in {monthLabel(month)}.</Text>
+          ) : (
+            <>
+              <Text style={{ color: colors.textMuted, fontSize: type.small }}>
+                Top: {d.categories.slice(0, 3).map((c) => c.name).join(", ")}
+              </Text>
+              <CategoryBreakdown shares={d.categories} totalPaise={d.summary.totalPaise} />
+            </>
+          ),
+          "Spending by category",
+        )}
+
+        {card(
+          d.recent.length === 0 ? (
+            <Text style={{ color: colors.textMuted, fontSize: type.body }}>No expenses in {monthLabel(month)}.</Text>
+          ) : (
+            <View style={{ marginHorizontal: -spacing.lg }}>
+              {d.recent.map((t) => (
+                <TransactionRow key={t.id} transaction={t} onPress={open} />
+              ))}
+            </View>
+          ),
+          `Recent in ${monthLabel(month)}`,
+          link("See all", () => router.navigate("/history")),
+        )}
+      </>
+    );
+  }
+
+  const arrow = (dir: -1 | 1) => (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={dir < 0 ? `Previous month, ${monthLabel(addMonths(month, -1))}` : `Next month, ${monthLabel(addMonths(month, 1))}`}
+      onPress={() => setMonth((m) => addMonths(m, dir))}
+      style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}
+    >
+      <Ionicons name={dir < 0 ? "chevron-back" : "chevron-forward"} size={22} color={colors.text} />
+    </Pressable>
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + spacing.sm, paddingBottom: 112 }}>
-        <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.headline, fontWeight: "700", paddingHorizontal: spacing.lg, marginBottom: spacing.md }}>
-          Meow
-        </Text>
-        {error ? (
-          <EmptyState icon="alert-circle-outline" title="Could not load" message="Please reopen the app." />
-        ) : !data ? (
-          <ActivityIndicator style={{ marginTop: spacing.xxl }} size="large" color={colors.primary} />
-        ) : (
-          <>
-            <View style={{ marginHorizontal: spacing.lg, padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}>
-              <Text style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "600" }}>Spent in {monthLabel(ym)}</Text>
-              <Text style={{ color: colors.text, fontSize: type.display, fontWeight: "700", marginTop: spacing.xs }}>{formatPaise(data.month.totalPaise)}</Text>
-              <Text style={{ color: colors.textMuted, fontSize: type.small, marginTop: spacing.xs }}>
-                {data.month.count} {data.month.count === 1 ? "expense" : "expenses"}
-                {data.month.pendingCount ? ` · ${formatPaise(data.month.pendingPaise)} pending` : ""}
-              </Text>
-              {comparison && data.totalEver > 0 ? (
-                <Text style={{ color: colors.textMuted, fontSize: type.small, marginTop: spacing.xs }}>{comparison.label}</Text>
-              ) : null}
-            </View>
-
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: spacing.lg, marginTop: spacing.xl, marginBottom: spacing.sm }}>
-              <Text style={{ color: colors.text, fontSize: type.bodyLarge, fontWeight: "700" }}>Recent</Text>
-              {data.totalEver > 0 ? (
-                <Pressable accessibilityRole="button" hitSlop={10} onPress={() => router.navigate("/history")}>
-                  <Text style={{ color: colors.primary, fontWeight: "700" }}>See all</Text>
-                </Pressable>
-              ) : null}
-            </View>
-            {data.recent.length === 0 ? (
-              <EmptyState icon="receipt-outline" title="No expenses yet" message="Tap “Add expense” to record your first one." />
-            ) : (
-              data.recent.map((t) => <TransactionRow key={t.id} transaction={t} onPress={open} />)
-            )}
-          </>
-        )}
+        <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.lg, marginBottom: spacing.md }}>
+          <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.headline, fontWeight: "700", flex: 1 }}>Meow</Text>
+          {arrow(-1)}
+          <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "700", minWidth: 80, textAlign: "center" }}>{monthLabel(month)}</Text>
+          {arrow(1)}
+        </View>
+        {!isCurrent ? (
+          <Pressable accessibilityRole="button" onPress={() => setMonth(monthOf(today))} style={{ alignSelf: "flex-end", marginRight: spacing.lg, marginBottom: spacing.sm }}>
+            <Text style={{ color: colors.primary, fontWeight: "700" }}>Back to this month</Text>
+          </Pressable>
+        ) : null}
+        {content}
       </ScrollView>
       <Fab onPress={() => router.push("/expense/new")} />
     </View>
