@@ -2,7 +2,7 @@
   "expo": {
     "name": "Meow",
     "slug": "meow",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "meow",
@@ -14,7 +14,7 @@
     ],
     "android": {
       "package": "com.isujaykumar.meow",
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#1F6F5C"
