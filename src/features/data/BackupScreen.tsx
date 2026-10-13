@@ -119,7 +119,7 @@ export function BackupScreen() {
     }
     Alert.alert(
       "Replace ALL data?",
-      "Every expense, category, merchant, budget and setting on this phone will be deleted and replaced by the backup. This cannot be undone. Export a backup of the current data first if you might need it.",
+      "Every expense, category, merchant, budget, setting and recurring template on this phone will be deleted and replaced by the backup (backups do not contain recurring templates). This cannot be undone. Export a backup of the current data first if you might need it.",
       [
         { text: "Cancel", style: "cancel" },
         { text: "Back up current data first", onPress: () => void doExportBackup() },

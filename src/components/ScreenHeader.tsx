@@ -17,11 +17,11 @@ export function ScreenHeader({ title, onBack }: { title: string; onBack: () => v
         borderBottomColor: colors.border,
       }}
     >
-      <View style={{ height: 56, flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.xs }}>
+      <View style={{ minHeight: 56, flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.xs }}>
         <Pressable accessibilityRole="button" accessibilityLabel="Go back" onPress={onBack} hitSlop={8} style={{ width: 48, height: 48, alignItems: "center", justifyContent: "center" }}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
-        <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.title, fontWeight: "700", marginLeft: spacing.xs }}>
+        <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.title, fontWeight: "700", marginLeft: spacing.xs, flex: 1 }}>
           {title}
         </Text>
       </View>

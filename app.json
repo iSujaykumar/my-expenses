@@ -2,7 +2,7 @@
   "expo": {
     "name": "Meow",
     "slug": "meow",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "meow",
@@ -11,16 +11,33 @@
       "expo-router",
       "expo-sqlite",
       "@react-native-community/datetimepicker",
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#1F6F5C",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#10241F"
+          }
+        }
+      ]
     ],
     "android": {
       "package": "com.isujaykumar.meow",
-      "versionCode": 4,
+      "versionCode": 5,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "monochromeImage": "./assets/adaptive-monochrome.png",
         "backgroundColor": "#1F6F5C"
       },
       "softwareKeyboardLayoutMode": "resize"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     }
   }
 }

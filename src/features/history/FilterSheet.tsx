@@ -7,6 +7,7 @@ import { DateField } from "../../components/DateTimeFields";
 import { PAYMENT_METHOD_LABELS, PAYMENT_METHODS, STATUSES } from "../../constants/categories";
 import { Category } from "../../repo/categories";
 import { Merchant } from "../../repo/merchants";
+import { useReducedMotion } from "../../theme/motion";
 import { useTheme } from "../../theme/useTheme";
 import { monthRange, monthOf, todayLocal } from "../../utils/date";
 import { DATE_PRESET_LABELS, DatePreset, DEFAULT_FILTERS, HistoryFilters, SORT_LABELS, SortOption, toggleValue } from "./filters";
@@ -23,6 +24,7 @@ export function FilterSheet(props: {
   onClose: () => void;
 }) {
   const { colors, spacing, radii, type } = useTheme();
+  const reduceMotion = useReducedMotion();
   const insets = useSafeAreaInsets();
   const [draft, setDraft] = useState<HistoryFilters>(props.filters);
   const [openedWith, setOpenedWith] = useState<HistoryFilters>(props.filters);
@@ -47,7 +49,7 @@ export function FilterSheet(props: {
   const setCustom = (start: string, end: string) => update({ customRange: start <= end ? { start, end } : { start: end, end: start } });
 
   return (
-    <Modal visible={props.visible} animationType="slide" onRequestClose={props.onClose} statusBarTranslucent navigationBarTranslucent>
+    <Modal visible={props.visible} animationType={reduceMotion ? "none" : "slide"} onRequestClose={props.onClose} statusBarTranslucent navigationBarTranslucent>
       <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: insets.top }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: spacing.lg }}>
           <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.title, fontWeight: "700" }}>Filter & sort</Text>

@@ -2,15 +2,17 @@ import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Category } from "../repo/categories";
+import { useReducedMotion } from "../theme/motion";
 import { useTheme } from "../theme/useTheme";
 import { CategoryIcon } from "./CategoryIcon";
 
 /** Pick one category from a list (Android back closes it). */
 export function CategoryPickerModal(props: { visible: boolean; title: string; message?: string; categories: Category[]; onPick: (c: Category) => void; onClose: () => void }) {
   const { colors, spacing, type } = useTheme();
+  const reduceMotion = useReducedMotion();
   const insets = useSafeAreaInsets();
   return (
-    <Modal visible={props.visible} animationType="slide" onRequestClose={props.onClose} statusBarTranslucent navigationBarTranslucent>
+    <Modal visible={props.visible} animationType={reduceMotion ? "none" : "slide"} onRequestClose={props.onClose} statusBarTranslucent navigationBarTranslucent>
       <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: insets.top, paddingBottom: insets.bottom }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: spacing.lg }}>
           <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.title, fontWeight: "700", flex: 1 }}>{props.title}</Text>

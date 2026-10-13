@@ -1,6 +1,6 @@
 {
   "name": "meow",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -29,6 +29,7 @@
     "expo-linking": "~57.0.12",
     "expo-router": "~57.0.26",
     "expo-sharing": "~57.0.23",
+    "expo-splash-screen": "~57.0.10",
     "expo-sqlite": "~57.0.4",
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
