@@ -41,6 +41,18 @@ export function createMerchantRepository(db: SqlDatabase) {
       return (await this.getById(id)) as Merchant;
     },
 
+    /** Merchants ordered by most recent use in an expense (then newest created). */
+    async recent(limit = 8): Promise<Merchant[]> {
+      const rows = await db.all<MerchantRow>(
+        `SELECT m.* FROM merchants m
+         LEFT JOIN (SELECT merchant_id, MAX(date || ' ' || created_at) AS last_used FROM transactions
+                    WHERE merchant_id IS NOT NULL GROUP BY merchant_id) u ON u.merchant_id = m.id
+         ORDER BY u.last_used IS NULL, u.last_used DESC, m.created_at DESC LIMIT ?`,
+        [limit],
+      );
+      return rows.map(toMerchant);
+    },
+
     async search(prefix: string, limit = 10): Promise<Merchant[]> {
       const rows = await db.all<MerchantRow>(
         "SELECT * FROM merchants WHERE name LIKE ? ESCAPE '\\' ORDER BY name COLLATE NOCASE LIMIT ?",

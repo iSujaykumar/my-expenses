@@ -53,6 +53,7 @@ export interface TransactionFilter {
   statuses?: TransactionStatus[];
   paymentMethods?: PaymentMethod[];
   merchantId?: string;
+  merchantIds?: string[];
   /** Text search in description, notes and merchant name (case-insensitive). */
   search?: string;
   minPaise?: number;
@@ -142,6 +143,10 @@ function buildWhere(filter: TransactionFilter): { sql: string; params: SqlParams
     parts.push("t.merchant_id = ?");
     params.push(filter.merchantId);
   }
+  if (filter.merchantIds?.length) {
+    parts.push(`t.merchant_id IN (${placeholders(filter.merchantIds.length)})`);
+    params.push(...filter.merchantIds);
+  }
   const search = filter.search?.trim();
   if (search) {
     const like = `%${escapeLike(search)}%`;
@@ -184,6 +189,9 @@ export interface SpendingSummary {
   refundedPaise: number;
   refundedCount: number;
 }
+
+/** Hard cap for one list query (History loads all matches up to this). */
+export const MAX_LIST_LIMIT = 50000;
 
 export function createTransactionRepository(db: SqlDatabase) {
   async function validate(input: TransactionInput, existing?: Transaction): Promise<Required<TransactionInput>> {
@@ -257,6 +265,21 @@ export function createTransactionRepository(db: SqlDatabase) {
       return (await repo.getById(id)) as TransactionWithDetails;
     },
 
+    /**
+     * Re-inserts a previously deleted record exactly as it was (same id, created_at, updated_at).
+     * Used by "Undo" after delete.
+     */
+    async restore(t: Transaction): Promise<TransactionWithDetails> {
+      if (!isValidPaise(t.amountPaise) || !isValidDateString(t.date)) throw new ValidationError("id", "Cannot restore this expense.");
+      await db.run(
+        `INSERT INTO transactions (id, amount_paise, description, date, time, category_id, merchant_id,
+           payment_method, status, notes, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [t.id, t.amountPaise, t.description, t.date, t.time, t.categoryId, t.merchantId, t.paymentMethod, t.status, t.notes, t.createdAt, t.updatedAt],
+      );
+      return (await repo.getById(t.id)) as TransactionWithDetails;
+    },
+
     async delete(id: string): Promise<boolean> {
       const r = await db.run("DELETE FROM transactions WHERE id = ?", [id]);
       return r.changes > 0;
@@ -265,7 +288,7 @@ export function createTransactionRepository(db: SqlDatabase) {
     /** List / search / filter. Shows ALL statuses unless filtered (refunded rows are visible, just never counted). */
     async list(filter: TransactionFilter = {}): Promise<TransactionWithDetails[]> {
       const { sql, params } = buildWhere(filter);
-      const limit = Math.max(1, Math.min(filter.limit ?? 500, 5000));
+      const limit = Math.max(1, Math.min(filter.limit ?? 500, MAX_LIST_LIMIT));
       const offset = Math.max(0, filter.offset ?? 0);
       const rows = await db.all<Row>(
         `${SELECT_DETAILS} ${sql} ORDER BY ${SORTS[filter.sort ?? "date_desc"]} LIMIT ? OFFSET ?`,
