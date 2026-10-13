@@ -21,4 +21,7 @@ jest.mock("expo-router", () => ({
 }));
 
 // Charts draw with native SVG; the text list next to the chart is what tests check.
-jest.mock("react-native-gifted-charts", () => ({ PieChart: () => null }));
+jest.mock("react-native-gifted-charts", () => ({ PieChart: () => null, BarChart: () => null }));
+
+// Native SQLite is never opened in unit tests (they use better-sqlite3); stub it so screens can be imported.
+jest.mock("expo-sqlite", () => ({ openDatabaseAsync: jest.fn() }));
