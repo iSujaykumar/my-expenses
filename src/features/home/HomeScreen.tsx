@@ -15,6 +15,7 @@ import { addMonths, monthLabel, monthOf, todayLocal, YearMonth } from "../../uti
 import { formatPaise } from "../../utils/money";
 import { CategoryBreakdown } from "../dashboard/CategoryBreakdown";
 import { DashboardData, loadDashboard } from "../dashboard/loadDashboard";
+import { DueSoon } from "../recurring/DueSoon";
 
 export function HomeScreen() {
   const repos = useRepositories();
@@ -187,6 +188,7 @@ export function HomeScreen() {
             <Text style={{ color: colors.primary, fontWeight: "700" }}>Back to this month</Text>
           </Pressable>
         ) : null}
+        <DueSoon today={today} />
         {content}
       </ScrollView>
       <Fab onPress={() => router.push("/expense/new")} />
