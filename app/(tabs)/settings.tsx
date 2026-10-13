@@ -62,11 +62,15 @@ export default function SettingsScreen() {
         <ListRow title="Categories" subtitle="Create, rename, recolour, archive" onPress={() => router.push("/settings/categories")} />
         {divider}
         <ListRow title="Budgets" subtitle="Optional monthly limits" onPress={() => router.push("/settings/budgets")} />
+        {divider}
+        <ListRow title="Recurring expenses" subtitle="Weekly or monthly bills shown in Due soon" onPress={() => router.push("/settings/recurring")} />
       </View>
 
       {section("Your data")}
       <View style={{ borderTopWidth: 1, borderBottomWidth: 1, borderColor: colors.border }}>
         <ListRow title="Backup, export & restore" subtitle="CSV export, full backup, restore from file" onPress={() => router.push("/settings/backup")} />
+        {divider}
+        <ListRow title="Load sample expenses" subtitle="Preview first; removable later" onPress={() => router.push("/settings/sample")} />
         {divider}
         <ListRow title="Reset all data" subtitle="Delete everything on this phone" onPress={() => router.push("/settings/reset")} />
       </View>
