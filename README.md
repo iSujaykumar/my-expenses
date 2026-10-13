@@ -4,12 +4,12 @@ Meow is a private, offline personal expense tracker for Android, built with
 React Native + Expo (SDK 57) + TypeScript + Expo Router. No login, no cloud,
 no ads, no analytics. Your data stays on your phone.
 
-**Status: Phase 1.** The app currently has only two placeholder tabs (Home and
-Settings). This phase proves that GitHub can build an installable APK for free.
+**Status: Phase 3 (version 1.0.1).** You can add, edit and delete expenses (with Undo),
+and browse, search, filter and sort them in History.
 
 - App name: **Meow**
 - Android package ID: `com.isujaykumar.meow` (never change it, or Android treats it as a different app)
-- Version: 1.0.0
+- Version: 1.0.1 (versionCode 2)
 - Currency: INR (Rs)
 
 ---
@@ -80,6 +80,25 @@ compare runs. Risk: a future Expo SDK upgrade could ship a different keystore.
 Check that step after any SDK upgrade.
 
 ---
+
+## Using the app
+
+- **Add an expense:** tap the green **Add expense** button (Home or History). Enter the amount,
+  pick a category, and optionally add a description, date (defaults to today), time, merchant
+  (recent ones are suggested), payment method, status and notes. Tap **Save expense**.
+  If something is missing, the problem is shown in red under that field, and nothing you
+  typed is lost.
+- **Status:** *Paid* and *Pending* count as spending (Pending shows a badge). *Refunded*
+  never counts in any total.
+- **Edit:** tap any expense. **Delete** asks for confirmation, then shows **Undo** for a
+  few seconds. Undo brings the expense back exactly as it was.
+- **Leaving with unsaved changes:** the back arrow and Android's back button ask
+  before discarding.
+- **History tab:** expenses grouped by day with day totals. Search box (description,
+  merchant, notes). Use the filter button to choose date range, category, merchant,
+  payment method, status and sort order. The line under the search box shows how many
+  expenses match and their total (refunded not counted). **Clear filters** resets everything.
+- Light and dark mode follow your phone's setting.
 
 ## For developers
 
