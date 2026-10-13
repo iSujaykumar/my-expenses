@@ -1,0 +1,37 @@
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# generated native folders (created by `expo prebuild` in CI)
+/android/
+/ios/
+
+# build outputs
+*.apk
+*.aab
+build/
+releases/
+coverage/
+
+# secrets and signing material
+.env
+.env*
+*.keystore
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+credentials.json
+credentials/
+google-services.json
+
+# misc
+.DS_Store
+npm-debug.*
+*.log

@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "Meow",
+    "slug": "meow",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "meow",
+    "userInterfaceStyle": "automatic",
+    "plugins": ["expo-router"],
+    "android": {
+      "package": "com.isujaykumar.meow",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#1F6F5C"
+      }
+    }
+  }
+}
