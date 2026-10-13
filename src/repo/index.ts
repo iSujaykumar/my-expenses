@@ -7,6 +7,8 @@ import { createTransactionRepository } from "./transactions";
 
 export function createRepositories(db: SqlDatabase) {
   return {
+    /** Raw database, for whole-database operations (backup, restore, reset). */
+    db,
     categories: createCategoryRepository(db),
     merchants: createMerchantRepository(db),
     transactions: createTransactionRepository(db),
