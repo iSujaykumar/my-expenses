@@ -97,6 +97,34 @@ Budget progress uses the same status rule as everything else.
 Allowed values (defaults first): `theme` = system / light / dark, `week_start` = monday / sunday,
 `date_format` = `DD MMM YYYY` / `DD/MM/YYYY` / `YYYY-MM-DD`. Unknown or invalid stored values fall back to the default.
 
+### recurring_templates (migration 2)
+| column | type | notes |
+| --- | --- | --- |
+| id | TEXT PK | |
+| description | TEXT NOT NULL | non-empty |
+| amount_paise | INTEGER NOT NULL | > 0 |
+| category_id | TEXT NOT NULL → categories | RESTRICT |
+| merchant_id | TEXT NULL → merchants | SET NULL |
+| payment_method | TEXT NOT NULL | same values as transactions |
+| frequency | TEXT NOT NULL | `weekly` / `monthly` |
+| start_date | TEXT NOT NULL | YYYY-MM-DD; weekly repeats on this weekday |
+| day_of_month | INTEGER NULL | monthly: 1-31, clamped to the month's last day |
+| is_paused | INTEGER 0/1 | |
+| notes, created_at, updated_at | TEXT | |
+
+### recurring_occurrences (migration 2)
+| column | type | notes |
+| --- | --- | --- |
+| template_id | TEXT → recurring_templates | CASCADE |
+| due_date | TEXT | YYYY-MM-DD |
+| outcome | TEXT | `recorded` / `skipped` |
+| transaction_id | TEXT NULL → transactions | SET NULL; recorded expense ID is `rec_<template>_<date>` |
+| created_at | TEXT | |
+
+PRIMARY KEY (template_id, due_date) makes recording idempotent: a second confirm inserts nothing.
+
+Sample expenses use IDs prefixed `sample_v1_` so they can be removed exactly.
+
 ## Code map
 
 - `src/db/types.ts`: `SqlDatabase` adapter interface, errors, transaction helper

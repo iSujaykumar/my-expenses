@@ -4,8 +4,9 @@ import { initDatabase } from "../src/db/migrations";
 import { SqlDatabase, SqlParams } from "../src/db/types";
 
 /** In-memory SQLite (better-sqlite3) behind the app's SqlDatabase interface, so tests execute real SQL. */
-export function createNodeDatabase(): { db: SqlDatabase; raw: Database.Database } {
-  const raw = new Database(":memory:");
+/** Pass a file path for a file-backed database (used to test persistence across close/reopen). */
+export function createNodeDatabase(path = ":memory:"): { db: SqlDatabase; raw: Database.Database } {
+  const raw = new Database(path);
   const db: SqlDatabase = {
     exec: async (sql) => {
       raw.exec(sql);
