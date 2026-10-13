@@ -110,6 +110,26 @@ Check that step after any SDK upgrade.
   on/off switch. A calm warning shows at 80% used, and a clear note at 100% or more.
 - Light and dark mode follow your phone's setting.
 
+## Reports, export, backup and settings (version 1.0.3)
+
+**Reports tab.** Pick Month, Year or Custom range. You see the total, the average per day, a comparison with the previous month or year, a trend chart (daily, weekly or monthly; weeks start on the day chosen in Settings), and breakdowns by category, merchant and payment method. Every number has a short "How this is calculated" note. The rule is always the same: **Paid and Pending count, Refunded never counts.** Days with no spending count as ₹0. If a period is still running, it is marked "In progress", and its average uses only the days so far. Grey bars mean a partial week or month. Tap "Show as table" to see every chart value as text.
+
+**Export CSV** (Settings → Backup, export & restore) makes a spreadsheet with one row per expense: ISO date (YYYY-MM-DD), amount in rupees with 2 decimals, the same amount in paise, category and merchant names, payment method, status, and whether it counts as spending. Text that starts with `=`, `+`, `-` or `@` gets a leading `'` so spreadsheet apps cannot run it as a formula. A CSV cannot be imported back; use a backup for that.
+
+**Full backup (JSON)** contains everything: expenses, categories, merchants, budgets and settings, plus `format_version`, the app version and `exported_at`. You choose where to save it from the Android share menu. Nothing is ever uploaded by the app.
+
+**Restore.** Choose a backup file. The whole file is checked *before anything is written*, and you see a preview: how many records are new, already on the phone, or invalid (with reasons). Then choose:
+- **Merge (add new)**: only adds what is missing. Nothing on the phone is changed or deleted.
+- **Replace everything**: deletes all data on the phone and restores the backup exactly. You are offered "Back up current data first". This runs as a single database transaction, so if anything fails, nothing changes. Replace is refused if the file has any invalid record.
+
+**How duplicates are detected (Merge).** Every record has a permanent random ID that is created once and never changes, and it is stored in the backup. If a record's ID already exists on the phone, it is the same record, so it is skipped and the phone's copy is kept. This means importing the same backup twice adds nothing the second time. Categories and merchants with the same name (ignoring capital letters) are treated as the same, and imported expenses are linked to the existing one. A budget for a category that already has a budget is skipped. Settings always keep the phone's values when merging.
+
+**Settings.** Theme (Follow phone / Light / Dark), date format (used throughout the app), week start (Monday/Sunday, used by weekly reports), links to Categories and Budgets, Backup & restore, and **Reset all data**, which only works after you type `DELETE`. Afterwards the starter categories come back.
+
+**Privacy.** Your data stays on the phone. The app has no account and makes no network calls. The data is **not encrypted** by the app, so use your phone's screen lock. Uninstalling Meow or using "Clear storage" deletes everything permanently unless you exported a backup. Exported files are not encrypted either.
+
+**Sample data:** not included yet. It is waiting for your list of sample expenses. The import pipeline is designed so a "Load sample expenses" option (with a preview, confirmation, and IDs that make the samples removable later) can be added once the list is provided.
+
 ## For developers
 
 ```bash
