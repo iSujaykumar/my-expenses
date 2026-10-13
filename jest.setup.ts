@@ -13,3 +13,12 @@ jest.mock("@expo/vector-icons", () => {
   Icon.glyphMap = new Proxy({}, { has: () => true });
   return { __esModule: true, Ionicons: Icon };
 });
+
+// Router hooks used by shared components (screens themselves aren't rendered in unit tests).
+jest.mock("expo-router", () => ({
+  useSegments: () => ["(tabs)"],
+  useRouter: () => ({ push: jest.fn(), back: jest.fn(), navigate: jest.fn() }),
+}));
+
+// Charts draw with native SVG; the text list next to the chart is what tests check.
+jest.mock("react-native-gifted-charts", () => ({ PieChart: () => null }));

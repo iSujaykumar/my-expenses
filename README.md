@@ -4,12 +4,12 @@ Meow is a private, offline personal expense tracker for Android, built with
 React Native + Expo (SDK 57) + TypeScript + Expo Router. No login, no cloud,
 no ads, no analytics. Your data stays on your phone.
 
-**Status: Phase 3 (version 1.0.1).** You can add, edit and delete expenses (with Undo),
-and browse, search, filter and sort them in History.
+**Status: Phase 4 (version 1.0.2).** Add, edit and delete expenses (with Undo); browse,
+search, filter and sort them in History; see a monthly dashboard; manage categories and budgets.
 
 - App name: **Meow**
 - Android package ID: `com.isujaykumar.meow` (never change it, or Android treats it as a different app)
-- Version: 1.0.1 (versionCode 2)
+- Version: 1.0.2 (versionCode 3)
 - Currency: INR (Rs)
 
 ---
@@ -98,6 +98,16 @@ Check that step after any SDK upgrade.
   merchant, notes). Use the filter button to choose date range, category, merchant,
   payment method, status and sort order. The line under the search box shows how many
   expenses match and their total (refunded not counted). **Clear filters** resets everything.
+- **Home (dashboard):** use the arrows to switch months. Shows the month total (paid +
+  pending), the year total, number of expenses, average per day (current month: days so far;
+  past months: all days; future months: none), comparison with the previous month, budgets,
+  a category chart with a text list of amounts and percentages, and recent expenses.
+- **Settings → Categories:** create, rename, recolour, change icon, archive or unarchive.
+  Archived categories are hidden when adding expenses but stay in history and totals. You can
+  move a category's expenses to another category (amounts and dates never change), and
+  delete a category only once it has no expenses.
+- **Settings → Budgets:** optional overall and per-category monthly budgets, each with an
+  on/off switch. A calm warning shows at 80% used, and a clear note at 100% or more.
 - Light and dark mode follow your phone's setting.
 
 ## For developers
