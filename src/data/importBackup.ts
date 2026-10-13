@@ -158,7 +158,7 @@ export async function applyImport(db: SqlDatabase, plan: ImportPlan): Promise<vo
   if (plan.blockedReason) throw new Error(plan.blockedReason);
   await withTransaction(db, async () => {
     if (plan.mode === "replace") {
-      await db.exec("DELETE FROM transactions; DELETE FROM budgets; DELETE FROM merchants; DELETE FROM categories; DELETE FROM settings;");
+      await db.exec("DELETE FROM recurring_occurrences; DELETE FROM recurring_templates; DELETE FROM transactions; DELETE FROM budgets; DELETE FROM merchants; DELETE FROM categories; DELETE FROM settings;");
       await insertAll(db, plan.toInsert);
       // A backup without settings still leaves the app with valid defaults.
       await seedDefaults(db, { categories: false, settingsIfMissing: true });

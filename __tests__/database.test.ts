@@ -8,7 +8,7 @@ describe("migrations", () => {
     const { db } = await createMigratedDatabase();
     expect(await getSchemaVersion(db)).toBe(LATEST_VERSION);
     const tables = await db.all<{ name: string }>("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name");
-    expect(tables.map((t) => t.name)).toEqual(["budgets", "categories", "merchants", "settings", "transactions"]);
+    expect(tables.map((t) => t.name)).toEqual(["budgets", "categories", "merchants", "recurring_occurrences", "recurring_templates", "settings", "transactions"]);
     const cats = await db.all<{ name: string }>("SELECT name FROM categories ORDER BY sort_order");
     expect(cats.map((c) => c.name)).toEqual(STARTER_CATEGORIES.map((c) => c.name));
     expect(cats).toHaveLength(14);

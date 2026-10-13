@@ -69,7 +69,7 @@ describe("JSON backup round trip", () => {
   it("export -> validate -> replace into a fresh database gives identical data", async () => {
     const { db } = await seeded();
     const backup = await buildBackup(db, "1.0.3", new Date("2026-10-13T10:00:00Z"));
-    expect(backup).toMatchObject({ format: "meow-backup", format_version: 1, app_version: "1.0.3", schema_version: 1, exported_at: "2026-10-13T10:00:00.000Z" });
+    expect(backup).toMatchObject({ format: "meow-backup", format_version: 1, app_version: "1.0.3", schema_version: 2, exported_at: "2026-10-13T10:00:00.000Z" });
     const text = JSON.stringify(backup);
 
     const v = parseAndValidateBackup(text);

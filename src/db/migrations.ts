@@ -96,6 +96,38 @@ CREATE TABLE settings (
       }
     },
   },
+  {
+    version: 2,
+    description: "Recurring expense templates + recorded/skipped occurrences",
+    async up(db) {
+      await db.exec(`
+CREATE TABLE recurring_templates (
+  id TEXT PRIMARY KEY NOT NULL,
+  description TEXT NOT NULL CHECK (length(trim(description)) > 0),
+  amount_paise INTEGER NOT NULL CHECK (typeof(amount_paise) = 'integer' AND amount_paise > 0),
+  category_id TEXT NOT NULL REFERENCES categories (id) ON DELETE RESTRICT,
+  merchant_id TEXT REFERENCES merchants (id) ON DELETE SET NULL,
+  payment_method TEXT NOT NULL CHECK (payment_method IN ('cash', 'upi', 'debit_card', 'credit_card', 'bank_transfer', 'other')),
+  frequency TEXT NOT NULL CHECK (frequency IN ('weekly', 'monthly')),
+  start_date TEXT NOT NULL CHECK (start_date GLOB '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]'),
+  day_of_month INTEGER CHECK (day_of_month IS NULL OR (day_of_month BETWEEN 1 AND 31)),
+  is_paused INTEGER NOT NULL DEFAULT 0 CHECK (is_paused IN (0, 1)),
+  notes TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE TABLE recurring_occurrences (
+  template_id TEXT NOT NULL REFERENCES recurring_templates (id) ON DELETE CASCADE,
+  due_date TEXT NOT NULL,
+  outcome TEXT NOT NULL CHECK (outcome IN ('recorded', 'skipped')),
+  transaction_id TEXT REFERENCES transactions (id) ON DELETE SET NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (template_id, due_date)
+);
+`);
+    },
+  },
 ];
 
 export const LATEST_VERSION = MIGRATIONS[MIGRATIONS.length - 1].version;

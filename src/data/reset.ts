@@ -25,7 +25,7 @@ export async function seedDefaults(db: SqlDatabase, options: { categories: boole
 /** Deletes every expense, merchant, budget, category and setting, then restores the starter categories and defaults. All-or-nothing. */
 export async function resetAllData(db: SqlDatabase): Promise<void> {
   await withTransaction(db, async () => {
-    await db.exec("DELETE FROM transactions; DELETE FROM budgets; DELETE FROM merchants; DELETE FROM categories; DELETE FROM settings;");
+    await db.exec("DELETE FROM recurring_occurrences; DELETE FROM recurring_templates; DELETE FROM transactions; DELETE FROM budgets; DELETE FROM merchants; DELETE FROM categories; DELETE FROM settings;");
     await seedDefaults(db, { categories: true, settingsIfMissing: true });
   });
 }
