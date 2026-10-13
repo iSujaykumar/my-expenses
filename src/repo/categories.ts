@@ -1,4 +1,4 @@
-import { SqlDatabase, ValidationError } from "../db/types";
+import { SqlDatabase, ValidationError, withTransaction } from "../db/types";
 import { newId, nowIso } from "../utils/id";
 
 export interface Category {
@@ -115,6 +115,27 @@ export function createCategoryRepository(db: SqlDatabase) {
     async transactionCount(id: string): Promise<number> {
       const row = await db.first<{ n: number }>("SELECT COUNT(*) AS n FROM transactions WHERE category_id = ?", [id]);
       return row?.n ?? 0;
+    },
+
+    /**
+     * Moves every expense (and a category budget, if the target has none) from one category to another.
+     * Amounts, dates and statuses are untouched, so overall totals stay identical. Returns the number moved.
+     */
+    async reassignTransactions(fromId: string, toId: string): Promise<number> {
+      if (fromId === toId) throw new ValidationError("toId", "Pick a different category.");
+      const from = await this.getById(fromId);
+      const to = await this.getById(toId);
+      if (!from) throw new ValidationError("fromId", "Category not found.");
+      if (!to) throw new ValidationError("toId", "Category not found.");
+      if (to.isArchived) throw new ValidationError("toId", "Pick an active category.");
+      return withTransaction(db, async () => {
+        const r = await db.run("UPDATE transactions SET category_id = ?, updated_at = ? WHERE category_id = ?", [toId, nowIso(), fromId]);
+        const targetBudget = await db.first<{ id: string }>("SELECT id FROM budgets WHERE scope = 'category' AND category_id = ?", [toId]);
+        if (!targetBudget) {
+          await db.run("UPDATE budgets SET category_id = ?, updated_at = ? WHERE scope = 'category' AND category_id = ?", [toId, nowIso(), fromId]);
+        }
+        return r.changes;
+      });
     },
 
     /** Deletes only an unused category. Used categories must be archived instead, so history is never lost. */

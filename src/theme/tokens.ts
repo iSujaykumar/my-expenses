@@ -75,3 +75,19 @@ export const typeScale = {
 } as const;
 
 export const touchTarget = 48;
+
+/** Category colour palette (readable on light and dark backgrounds). */
+export const categoryPalette = [
+  "#C2185B", "#2E7D32", "#E65100", "#1565C0", "#6A1B9A", "#00838F", "#AD1457",
+  "#C62828", "#795548", "#5D4037", "#D81B60", "#0277BD", "#283593", "#546E7A",
+  "#00695C", "#9E7700", "#4527A0", "#558B2F",
+] as const;
+
+/** Icons offered when creating or editing a category (Ionicons names). */
+export const categoryIcons = [
+  "bag-handle-outline", "cart-outline", "restaurant-outline", "cafe-outline", "car-outline", "bus-outline",
+  "flash-outline", "phone-portrait-outline", "shirt-outline", "fitness-outline", "medkit-outline", "paw-outline",
+  "home-outline", "gift-outline", "airplane-outline", "school-outline", "book-outline", "game-controller-outline",
+  "film-outline", "musical-notes-outline", "construct-outline", "wifi-outline", "card-outline", "heart-outline",
+  "people-outline", "happy-outline", "leaf-outline", "beer-outline", "pizza-outline", "ellipsis-horizontal-circle-outline",
+] as const;

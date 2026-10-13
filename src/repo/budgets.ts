@@ -41,6 +41,18 @@ export interface BudgetProgress {
   /** Whole percent used, may exceed 100. */
   percentUsed: number;
   overBudget: boolean;
+  /** ok < 80%, warning 80-99%, over >= 100% */
+  level: BudgetLevel;
+}
+
+export type BudgetLevel = "ok" | "warning" | "over";
+export const BUDGET_WARNING_PERCENT = 80;
+
+/** Threshold rule, computed with integers only: warning at >= 80% used, over at >= 100%. */
+export function budgetLevel(spentPaise: number, budgetPaise: number): BudgetLevel {
+  if (spentPaise >= budgetPaise) return "over";
+  if (spentPaise * 100 >= budgetPaise * BUDGET_WARNING_PERCENT) return "warning";
+  return "ok";
 }
 
 export function createBudgetRepository(db: SqlDatabase) {
@@ -79,6 +91,11 @@ export function createBudgetRepository(db: SqlDatabase) {
       return toBudget((await db.first<BudgetRow>("SELECT * FROM budgets WHERE id = ?", [id])) as BudgetRow);
     },
 
+    async setEnabled(id: string, enabled: boolean): Promise<void> {
+      const r = await db.run("UPDATE budgets SET enabled = ?, updated_at = ? WHERE id = ?", [enabled ? 1 : 0, nowIso(), id]);
+      if (r.changes === 0) throw new ValidationError("id", "Budget not found.");
+    },
+
     async delete(id: string): Promise<boolean> {
       return (await db.run("DELETE FROM budgets WHERE id = ?", [id])).changes > 0;
     },
@@ -101,6 +118,7 @@ export function createBudgetRepository(db: SqlDatabase) {
           remainingPaise: budget.monthlyAmountPaise - spentPaise,
           percentUsed: Math.floor((spentPaise * 100) / budget.monthlyAmountPaise),
           overBudget: spentPaise > budget.monthlyAmountPaise,
+          level: budgetLevel(spentPaise, budget.monthlyAmountPaise),
         });
       }
       return result;
