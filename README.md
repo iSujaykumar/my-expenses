@@ -79,10 +79,11 @@ copies `android/app/debug.keystore` from the npm package
 `expo-template-bare-minimum`. It is a fixed file inside that package, not generated
 on each machine. Its SHA-256 is the same in the SDK 55, 56 and 57 templates
 (`221e0a31...9f5e58`). Each workflow run prints the keystore file hash and the APK
-The APK signing certificate SHA-256 has been `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c` in every build so far.
 certificate SHA-256 in the step "Show signing certificate fingerprint", so you can
 compare runs. Risk: a future Expo SDK upgrade could ship a different keystore.
 Check that step after any SDK upgrade.
+
+The APK signing certificate SHA-256 has been `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c` in every build so far.
 
 ---
 
