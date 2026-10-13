@@ -137,3 +137,13 @@ export function compareWithPreviousMonth(current: YearMonth, currentPaise: numbe
   }
   return { current, previous, currentPaise, previousPaise, differencePaise, direction, percentChange, label };
 }
+
+export type DateFormat = "DD MMM YYYY" | "DD/MM/YYYY" | "YYYY-MM-DD";
+
+/** Formats a stored YYYY-MM-DD date in the user's chosen display format. */
+export function formatDisplayDate(date: string, format: DateFormat): string {
+  const { year, month, day } = parseDateString(date);
+  if (format === "DD/MM/YYYY") return `${pad2(day)}/${pad2(month)}/${year}`;
+  if (format === "YYYY-MM-DD") return date;
+  return formatDateLabel(date);
+}

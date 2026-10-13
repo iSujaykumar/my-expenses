@@ -3,8 +3,9 @@ import DateTimePicker, { DateTimePickerAndroid, DateTimePickerEvent } from "@rea
 import { useState } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
 
+import { useFormatDate } from "../state/AppSettings";
 import { useTheme } from "../theme/useTheme";
-import { addDays, formatDateLabel, isValidDateString, toDateString, todayLocal } from "../utils/date";
+import { addDays, isValidDateString, toDateString, todayLocal } from "../utils/date";
 import { Chip } from "./Chip";
 
 function dateFromString(value: string): Date {
@@ -37,6 +38,7 @@ export function DateField({ value, onChange }: { value: string; onChange: (date:
   const { colors, spacing, type } = useTheme();
   const fieldStyle = useFieldStyle();
   const [iosOpen, setIosOpen] = useState(false);
+  const formatDate = useFormatDate();
   const today = todayLocal();
 
   const handle = (event: DateTimePickerEvent, date?: Date) => {
@@ -53,10 +55,10 @@ export function DateField({ value, onChange }: { value: string; onChange: (date:
 
   return (
     <View>
-      <Pressable accessibilityRole="button" accessibilityLabel={`Date, ${isValidDateString(value) ? formatDateLabel(value) : "not set"}. Change`} onPress={open} style={fieldStyle}>
+      <Pressable accessibilityRole="button" accessibilityLabel={`Date, ${isValidDateString(value) ? formatDate(value) : "not set"}. Change`} onPress={open} style={fieldStyle}>
         <Ionicons name="calendar-outline" size={20} color={colors.textMuted} />
         <Text style={{ color: colors.text, fontSize: type.body, marginLeft: spacing.sm, flex: 1 }}>
-          {isValidDateString(value) ? formatDateLabel(value) : "Pick a date"}
+          {isValidDateString(value) ? formatDate(value) : "Pick a date"}
         </Text>
         <Text style={{ color: colors.primary, fontWeight: "700" }}>Change</Text>
       </Pressable>

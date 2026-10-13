@@ -13,10 +13,10 @@ export type HistoryItem<T extends GroupableTransaction> =
   | { type: "row"; key: string; transaction: T };
 
 /** "Today", "Yesterday" or "13 Oct 2026". */
-export function dayLabel(date: string, today: string): string {
+export function dayLabel(date: string, today: string, formatDate: (d: string) => string = formatDateLabel): string {
   if (date === today) return "Today";
   if (date === addDays(today, -1)) return "Yesterday";
-  return formatDateLabel(date);
+  return formatDate(date);
 }
 
 /**
@@ -24,12 +24,16 @@ export function dayLabel(date: string, today: string): string {
  * Day totals follow the status rule (refunded excluded). Works for any sort: when sorted by amount,
  * rows are still grouped by consecutive dates, so callers should group only date sorts.
  */
-export function groupByDate<T extends GroupableTransaction>(rows: readonly T[], today: string): HistoryItem<T>[] {
+export function groupByDate<T extends GroupableTransaction>(
+  rows: readonly T[],
+  today: string,
+  formatDate: (d: string) => string = formatDateLabel,
+): HistoryItem<T>[] {
   const items: HistoryItem<T>[] = [];
   let header: Extract<HistoryItem<T>, { type: "header" }> | null = null;
   for (const t of rows) {
     if (!header || header.date !== t.date) {
-      header = { type: "header", key: `h_${t.date}_${items.length}`, date: t.date, label: dayLabel(t.date, today), dayTotalPaise: 0, count: 0 };
+      header = { type: "header", key: `h_${t.date}_${items.length}`, date: t.date, label: dayLabel(t.date, today, formatDate), dayTotalPaise: 0, count: 0 };
       items.push(header);
     }
     header.count += 1;

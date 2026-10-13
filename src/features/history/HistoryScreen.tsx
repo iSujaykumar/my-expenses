@@ -12,6 +12,7 @@ import { useRepositories } from "../../db/DatabaseProvider";
 import { Category } from "../../repo/categories";
 import { Merchant } from "../../repo/merchants";
 import { MAX_LIST_LIMIT, SpendingSummary, TransactionWithDetails } from "../../repo/transactions";
+import { useFormatDate } from "../../state/AppSettings";
 import { useDataVersion } from "../../state/dataEvents";
 import { useTheme } from "../../theme/useTheme";
 import { todayLocal } from "../../utils/date";
@@ -28,6 +29,7 @@ export function HistoryScreen() {
   const insets = useSafeAreaInsets();
   const { colors, spacing, radii, type } = useTheme();
   const dataVersion = useDataVersion();
+  const formatDate = useFormatDate();
 
   const [filters, setFilters] = useState<HistoryFilters>(DEFAULT_FILTERS);
   const [searchText, setSearchText] = useState("");
@@ -75,8 +77,8 @@ export function HistoryScreen() {
   const items: Item[] = useMemo(() => {
     if (!rows) return [];
     const byDate = filters.sort === "date_desc" || filters.sort === "date_asc";
-    return byDate ? groupByDate(rows, todayLocal()) : ungrouped(rows);
-  }, [rows, filters.sort]);
+    return byDate ? groupByDate(rows, todayLocal(), formatDate) : ungrouped(rows);
+  }, [rows, filters.sort, formatDate]);
 
   const openExpense = useCallback((id: string) => router.push({ pathname: "/expense/[id]", params: { id } }), [router]);
   const clearAll = () => {
