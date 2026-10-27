@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, Text, View } from "react-native";
 
 import { useTheme } from "../theme/useTheme";
+import { FONT_FAMILY } from "../theme/tokens";
 
 /** Compact "‹ October 2026 ›" pill used to move between months or other periods. */
 export function PeriodSwitcher({
@@ -44,7 +45,7 @@ export function PeriodSwitcher({
       ]}
     >
       {arrow(-1)}
-      <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "600", minWidth: 120, textAlign: "center", paddingHorizontal: spacing.xs }}>{label}</Text>
+      <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.body, fontWeight: "600", minWidth: 120, textAlign: "center", paddingHorizontal: spacing.xs }}>{label}</Text>
       {arrow(1)}
     </View>
   );

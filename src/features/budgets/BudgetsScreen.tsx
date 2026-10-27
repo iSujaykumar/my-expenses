@@ -14,6 +14,7 @@ import { Category } from "../../repo/categories";
 import { notifyDataChanged, useDataVersion } from "../../state/dataEvents";
 import { useTheme } from "../../theme/useTheme";
 import { BudgetEditorRow } from "./BudgetEditorRow";
+import { FONT_FAMILY } from "../../theme/tokens";
 
 export function BudgetsScreen() {
   const repos = useRepositories();
@@ -72,7 +73,7 @@ export function BudgetsScreen() {
       ) : (
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}>
-            <Text style={{ color: colors.textMuted, fontSize: type.small, lineHeight: 19, marginBottom: spacing.lg, paddingHorizontal: spacing.xs }}>
+            <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, lineHeight: 19, marginBottom: spacing.lg, paddingHorizontal: spacing.xs }}>
               Monthly limits are optional. Paid and pending expenses count; refunded ones don&apos;t. You&apos;ll see a gentle warning at 80% and a clear note at 100%.
             </Text>
             <BudgetEditorRow
@@ -91,7 +92,7 @@ export function BudgetsScreen() {
 
             <SectionHeader title="Category budgets" variant="group" style={{ marginTop: spacing.lg }} />
             {perCategory.length === 0 && !newCategory ? (
-              <Text style={{ color: colors.textMuted, marginBottom: spacing.md, paddingHorizontal: spacing.xs }}>None yet.</Text>
+              <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, marginBottom: spacing.md, paddingHorizontal: spacing.xs }}>None yet.</Text>
             ) : null}
             {perCategory.map((b) => {
               const c = b.categoryId ? catById.get(b.categoryId) : undefined;

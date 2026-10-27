@@ -20,7 +20,7 @@ import { ValidationError } from "../../db/types";
 import { Category } from "../../repo/categories";
 import { useFormatDate } from "../../state/AppSettings";
 import { notifyDataChanged } from "../../state/dataEvents";
-import { MONEY } from "../../theme/tokens";
+import { FONT_FAMILY, MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { parseDateString, toDateString, todayLocal } from "../../utils/date";
 import { paiseToInputString, parseRupeesToPaise } from "../../utils/money";
@@ -149,7 +149,7 @@ export function RecurringFormScreen() {
                 style={[field(errors.category), { flexDirection: "row", alignItems: "center", paddingVertical: spacing.xs }]}
               >
                 {category ? <CategoryIcon icon={category.icon} color={category.color} size={32} /> : <Ionicons name="pricetags-outline" size={20} color={colors.textMuted} />}
-                <Text style={{ color: category ? colors.text : colors.textMuted, marginLeft: spacing.sm, flex: 1, fontSize: type.body }}>{category?.name ?? "Pick a category"}</Text>
+                <Text style={{ fontFamily: FONT_FAMILY, color: category ? colors.text : colors.textMuted, marginLeft: spacing.sm, flex: 1, fontSize: type.body }}>{category?.name ?? "Pick a category"}</Text>
                 <Ionicons name="chevron-down" size={18} color={colors.textMuted} />
               </Pressable>
             </FormField>
@@ -170,7 +170,7 @@ export function RecurringFormScreen() {
             <FormField label={frequency === "weekly" ? "First date (repeats on this weekday)" : "Start date"}>
               <Pressable accessibilityRole="button" accessibilityLabel={`Start date ${formatDate(startDate)}. Change`} onPress={pickStart} style={[input, { flexDirection: "row", alignItems: "center" }]}>
                 <Ionicons name="calendar-outline" size={18} color={colors.primary} style={{ marginRight: spacing.sm }} />
-                <Text style={{ color: colors.text, fontSize: type.body }}>{formatDate(startDate)}</Text>
+                <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.body }}>{formatDate(startDate)}</Text>
               </Pressable>
             </FormField>
             {frequency === "monthly" ? (
@@ -188,12 +188,12 @@ export function RecurringFormScreen() {
               />
             </FormField>
             <FormField label="Notes">
-              <TextInput accessibilityLabel="Notes" value={notes} onChangeText={setNotes} multiline placeholder="Optional" placeholderTextColor={colors.textFaint} style={[input, { minHeight: 80, textAlignVertical: "top" }]} maxLength={500} />
+              <TextInput accessibilityLabel="Notes" value={notes} onChangeText={setNotes} multiline placeholder="Optional" placeholderTextColor={colors.textFaint} style={[input, { fontFamily: FONT_FAMILY, minHeight: 80, textAlignVertical: "top" }]} maxLength={500} />
             </FormField>
           </Card>
           <View style={{ flexDirection: "row", alignItems: "flex-start", paddingHorizontal: spacing.xs }}>
             <Ionicons name="information-circle-outline" size={16} color={colors.textFaint} style={{ marginRight: spacing.sm, marginTop: 1 }} />
-            <Text style={{ color: colors.textMuted, fontSize: type.small, lineHeight: 19, flex: 1 }}>
+            <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, lineHeight: 19, flex: 1 }}>
               Changes apply to future occurrences only. Expenses already recorded keep their values. No notifications are sent; check &quot;Due soon&quot; on Home.
             </Text>
           </View>

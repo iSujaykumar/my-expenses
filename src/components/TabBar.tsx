@@ -4,6 +4,7 @@ import { ComponentProps } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { useTheme } from "../theme/useTheme";
+import { FONT_FAMILY } from "../theme/tokens";
 
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>["tabBar"]>>[0];
 type IconName = ComponentProps<typeof Ionicons>["name"];
@@ -45,7 +46,7 @@ export function TabBar({ state, descriptors, navigation, insets }: TabBarProps) 
         <View style={[styles.pill, { backgroundColor: focused ? colors.primarySoft : "transparent" }]}>
           <Ionicons name={focused ? icon.on : icon.off} size={21} color={focused ? colors.onPrimarySoft : colors.textMuted} />
         </View>
-        <Text numberOfLines={1} style={{ fontSize: type.caption - 1, marginTop: 3, color: focused ? colors.text : colors.textMuted, fontWeight: focused ? "600" : "500" }}>
+        <Text numberOfLines={1} style={{ fontFamily: FONT_FAMILY, fontSize: type.caption - 1, marginTop: 3, color: focused ? colors.text : colors.textMuted, fontWeight: focused ? "600" : "500" }}>
           {label}
         </Text>
       </Pressable>

@@ -11,7 +11,7 @@ import { useRepositories } from "../../db/DatabaseProvider";
 import { DueItem } from "../../repo/recurring";
 import { notifyDataChanged, useDataVersion } from "../../state/dataEvents";
 import { useFormatDate } from "../../state/AppSettings";
-import { MONEY } from "../../theme/tokens";
+import { FONT_FAMILY, MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { hapticSuccess } from "../../utils/haptics";
 import { formatPaise } from "../../utils/money";
@@ -68,7 +68,7 @@ export function DueSoon({ today }: { today: string }) {
       <Card padded={false}>
         <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.xs }}>
           <Ionicons name="information-circle-outline" size={15} color={colors.textMuted} style={{ marginRight: spacing.xs }} />
-          <Text style={{ color: colors.textMuted, fontSize: type.caption, flex: 1 }}>Nothing is recorded automatically. Tap Record when you have paid.</Text>
+          <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption, flex: 1 }}>Nothing is recorded automatically. Tap Record when you have paid.</Text>
         </View>
         {shown.map((item, i) => {
           const key = `${item.template.id}|${item.dueDate}`;
@@ -78,8 +78,8 @@ export function DueSoon({ today }: { today: string }) {
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <CategoryIcon icon={item.template.categoryIcon} color={item.template.categoryColor} size={40} />
                 <View style={{ flex: 1, marginLeft: spacing.md }}>
-                  <Text numberOfLines={1} style={{ color: colors.text, fontSize: type.body, fontWeight: "600" }}>{item.template.description}</Text>
-                  <Text style={{ color: item.overdue ? colors.warning : colors.textMuted, fontSize: type.small, marginTop: 2, fontWeight: item.overdue ? "500" : "400" }}>
+                  <Text numberOfLines={1} style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.body, fontWeight: "600" }}>{item.template.description}</Text>
+                  <Text style={{ fontFamily: FONT_FAMILY, color: item.overdue ? colors.warning : colors.textMuted, fontSize: type.small, marginTop: 2, fontWeight: item.overdue ? "500" : "400" }}>
                     {item.dueDate === today ? "Due today" : item.overdue ? `Was due ${formatDate(item.dueDate)}` : `Due ${formatDate(item.dueDate)}`} · {item.template.categoryName}
                   </Text>
                 </View>
@@ -95,7 +95,7 @@ export function DueSoon({ today }: { today: string }) {
                   style={({ pressed }) => ({ minHeight: 40, paddingHorizontal: spacing.lg, flexDirection: "row", alignItems: "center", borderRadius: radii.pill, backgroundColor: colors.primary, opacity: busyKey ? 0.6 : pressed ? 0.86 : 1 })}
                 >
                   <Ionicons name="checkmark" size={16} color={colors.onPrimary} style={{ marginRight: spacing.xs }} />
-                  <Text style={{ color: colors.onPrimary, fontWeight: "600", fontSize: type.small }}>{busy ? "Saving…" : "Record"}</Text>
+                  <Text style={{ fontFamily: FONT_FAMILY, color: colors.onPrimary, fontWeight: "600", fontSize: type.small }}>{busy ? "Saving…" : "Record"}</Text>
                 </Pressable>
                 <Pressable
                   accessibilityRole="button"
@@ -104,14 +104,14 @@ export function DueSoon({ today }: { today: string }) {
                   onPress={() => act(item, "skip")}
                   style={({ pressed }) => ({ minHeight: 40, paddingHorizontal: spacing.lg, justifyContent: "center", borderRadius: radii.pill, backgroundColor: pressed ? colors.border : colors.surfaceAlt })}
                 >
-                  <Text style={{ color: colors.text, fontWeight: "600", fontSize: type.small }}>Skip</Text>
+                  <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontWeight: "600", fontSize: type.small }}>Skip</Text>
                 </Pressable>
               </View>
             </View>
           );
         })}
         {items.length > shown.length ? (
-          <Text style={{ color: colors.textMuted, fontSize: type.small, paddingHorizontal: spacing.lg, paddingBottom: spacing.md }}>+ {items.length - shown.length} more due</Text>
+          <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, paddingHorizontal: spacing.lg, paddingBottom: spacing.md }}>+ {items.length - shown.length} more due</Text>
         ) : null}
       </Card>
     </View>

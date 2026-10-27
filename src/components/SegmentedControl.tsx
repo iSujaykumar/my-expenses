@@ -3,6 +3,7 @@ import { ComponentProps } from "react";
 import { Pressable, Text, View } from "react-native";
 
 import { useTheme } from "../theme/useTheme";
+import { FONT_FAMILY } from "../theme/tokens";
 
 export interface Segment<T extends string> {
   value: T;
@@ -59,7 +60,7 @@ export function SegmentedControl<T extends string>({
             ]}
           >
             {s.icon ? <Ionicons name={s.icon} size={15} color={selected ? colors.primary : colors.textMuted} style={{ marginRight: spacing.xs + 1 }} /> : null}
-            <Text numberOfLines={1} style={{ color: selected ? colors.text : colors.textMuted, fontSize: type.small, fontWeight: selected ? "600" : "500" }}>
+            <Text numberOfLines={1} style={{ fontFamily: FONT_FAMILY, color: selected ? colors.text : colors.textMuted, fontSize: type.small, fontWeight: selected ? "600" : "500" }}>
               {s.label}
             </Text>
           </Pressable>

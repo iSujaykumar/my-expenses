@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { ComponentProps } from "react";
 import { Pressable, Text, View } from "react-native";
 
-import { categoryColor } from "../theme/tokens";
+import { categoryColor, FONT_FAMILY } from "../theme/tokens";
 import { useTheme } from "../theme/useTheme";
 
 /** Selectable pill used for radio/checkbox style choices. */
@@ -40,7 +40,7 @@ export function Chip(props: {
     >
       {props.icon ? <Ionicons name={props.icon} size={16} color={iconColor} style={{ marginRight: spacing.xs + 2 }} /> : null}
       {!props.icon && dot ? <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: dot, marginRight: spacing.xs + 2 }} /> : null}
-      <Text style={{ color: props.selected ? colors.onPrimarySoft : colors.text, fontSize: type.small, fontWeight: props.selected ? "600" : "500" }}>{props.label}</Text>
+      <Text style={{ fontFamily: FONT_FAMILY, color: props.selected ? colors.onPrimarySoft : colors.text, fontSize: type.small, fontWeight: props.selected ? "600" : "500" }}>{props.label}</Text>
       {props.selected && props.role === "checkbox" ? <Ionicons name="checkmark" size={14} color={colors.onPrimarySoft} style={{ marginLeft: spacing.xs }} /> : null}
     </Pressable>
   );

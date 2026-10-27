@@ -12,7 +12,7 @@ import { useRepositories } from "../../db/DatabaseProvider";
 import { useAppSettings, useFormatDate } from "../../state/AppSettings";
 import { subscribeDataChanged } from "../../state/dataEvents";
 import { MAX_CONTENT_WIDTH } from "../../theme/motion";
-import { MONEY } from "../../theme/tokens";
+import { FONT_FAMILY, MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import {
   addMonths, compareWithPreviousMonth, DateRange, monthLabel, monthOf, monthRange, parseDateString, toDateString, todayLocal, YearMonth, yearRange,
@@ -129,14 +129,14 @@ export function ReportsScreen() {
 
   const card = (title: string, children: ReactNode, how?: string) => (
     <Card style={{ marginBottom: spacing.md }}>
-      <Text accessibilityRole="header" style={{ color: colors.text, fontWeight: "700", fontSize: type.bodyLarge, letterSpacing: -0.2, marginBottom: spacing.md }}>
+      <Text accessibilityRole="header" style={{ fontFamily: FONT_FAMILY, color: colors.text, fontWeight: "700", fontSize: type.bodyLarge, letterSpacing: -0.2, marginBottom: spacing.md }}>
         {title}
       </Text>
       {children}
       {how ? (
         <View style={{ flexDirection: "row", alignItems: "flex-start", marginTop: spacing.md, paddingTop: spacing.md, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.divider }}>
           <Ionicons name="information-circle-outline" size={15} color={colors.textFaint} style={{ marginRight: spacing.xs + 2, marginTop: 1 }} />
-          <Text style={{ color: colors.textMuted, fontSize: type.caption, lineHeight: 17, flex: 1 }}>How this is calculated: {how}</Text>
+          <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption, lineHeight: 17, flex: 1 }}>How this is calculated: {how}</Text>
         </View>
       ) : null}
     </Card>
@@ -152,7 +152,7 @@ export function ReportsScreen() {
         style={{ marginBottom: spacing.md }}
       >
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
-          <Text style={{ color: colors.text, flex: 1, fontSize: type.body, fontWeight: "500" }} numberOfLines={1}>
+          <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, flex: 1, fontSize: type.body, fontWeight: "500" }} numberOfLines={1}>
             {r.name}
           </Text>
           <Text style={{ ...MONEY, color: colors.text, fontWeight: "600", fontSize: type.body }}>{formatPaise(r.totalPaise)}</Text>
@@ -173,7 +173,7 @@ export function ReportsScreen() {
       style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{ paddingTop: insets.top + spacing.md, paddingHorizontal: spacing.lg, paddingBottom: 112, width: "100%", maxWidth: MAX_CONTENT_WIDTH, alignSelf: "center" }}
     >
-      <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.headline, fontWeight: "800", letterSpacing: -0.6, marginBottom: spacing.md }}>
+      <Text accessibilityRole="header" style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.headline, fontWeight: "800", letterSpacing: -0.6, marginBottom: spacing.md }}>
         Reports
       </Text>
       <SegmentedControl
@@ -213,8 +213,8 @@ export function ReportsScreen() {
               >
                 <Ionicons name="calendar-outline" size={18} color={colors.primary} style={{ marginRight: spacing.sm }} />
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: colors.textMuted, fontSize: type.caption }}>{w === "start" ? "From" : "To"}</Text>
-                  <Text style={{ color: colors.text, fontWeight: "600", fontSize: type.body }}>{formatDate(custom[w])}</Text>
+                  <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption }}>{w === "start" ? "From" : "To"}</Text>
+                  <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontWeight: "600", fontSize: type.body }}>{formatDate(custom[w])}</Text>
                 </View>
               </Pressable>
             ))}
@@ -234,7 +234,7 @@ export function ReportsScreen() {
       {error ? (
         <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: colors.dangerSurface, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}>
           <Ionicons name="alert-circle" size={18} color={colors.danger} style={{ marginRight: spacing.sm }} />
-          <Text style={{ color: colors.danger, fontSize: type.body }}>Could not load this report.</Text>
+          <Text style={{ fontFamily: FONT_FAMILY, color: colors.danger, fontSize: type.body }}>Could not load this report.</Text>
         </View>
       ) : null}
       {data ? (
@@ -245,7 +245,7 @@ export function ReportsScreen() {
               <Text accessibilityLabel={`Total spent ${formatPaise(data.summary.totalPaise)}`} style={{ ...MONEY, color: colors.text, fontSize: type.display, fontWeight: "700", letterSpacing: -0.8 }}>
                 {formatPaise(data.summary.totalPaise)}
               </Text>
-              <Text style={{ color: colors.textMuted, marginTop: spacing.xs, fontSize: type.small }}>
+              <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, marginTop: spacing.xs, fontSize: type.small }}>
                 {data.summary.count} {data.summary.count === 1 ? "expense" : "expenses"} · {data.info.note}
               </Text>
               {comparison ? (
@@ -263,19 +263,19 @@ export function ReportsScreen() {
                 <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: spacing.md, gap: spacing.sm }}>
                   {data.averagePerDayPaise !== null ? (
                     <View style={{ flexGrow: 1, flexBasis: 140, backgroundColor: colors.surfaceAlt, borderRadius: radii.md, padding: spacing.md }}>
-                      <Text style={{ color: colors.textMuted, fontSize: type.caption }}>Average per day</Text>
+                      <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption }}>Average per day</Text>
                       <Text style={{ ...MONEY, color: colors.text, fontSize: type.body, fontWeight: "700", marginTop: 2 }}>{formatPaise(data.averagePerDayPaise)}</Text>
                     </View>
                   ) : null}
                   {data.summary.pendingPaise > 0 ? (
                     <View style={{ flexGrow: 1, flexBasis: 140, backgroundColor: colors.surfaceAlt, borderRadius: radii.md, padding: spacing.md }}>
-                      <Text style={{ color: colors.textMuted, fontSize: type.caption }}>Pending (included)</Text>
+                      <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption }}>Pending (included)</Text>
                       <Text style={{ ...MONEY, color: colors.text, fontSize: type.body, fontWeight: "700", marginTop: 2 }}>{formatPaise(data.summary.pendingPaise)}</Text>
                     </View>
                   ) : null}
                   {data.summary.refundedCount > 0 ? (
                     <View style={{ flexGrow: 1, flexBasis: 140, backgroundColor: colors.surfaceAlt, borderRadius: radii.md, padding: spacing.md }}>
-                      <Text style={{ color: colors.textMuted, fontSize: type.caption }}>Refunded (not counted)</Text>
+                      <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption }}>Refunded (not counted)</Text>
                       <Text style={{ ...MONEY, color: colors.text, fontSize: type.body, fontWeight: "700", marginTop: 2 }}>{formatPaise(data.summary.refundedPaise)}</Text>
                     </View>
                   ) : null}
@@ -290,10 +290,10 @@ export function ReportsScreen() {
               <View style={{ width: 56, height: 56, borderRadius: 18, backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center", marginBottom: spacing.md }}>
                 <Ionicons name="bar-chart-outline" size={26} color={colors.onPrimarySoft} />
               </View>
-              <Text accessibilityRole="header" style={{ color: colors.text, fontWeight: "700", fontSize: type.bodyLarge }}>
+              <Text accessibilityRole="header" style={{ fontFamily: FONT_FAMILY, color: colors.text, fontWeight: "700", fontSize: type.bodyLarge }}>
                 No spending
               </Text>
-              <Text style={{ color: colors.textMuted, marginTop: spacing.xs, textAlign: "center", fontSize: type.body }}>
+              <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, marginTop: spacing.xs, textAlign: "center", fontSize: type.body }}>
                 {data.info.state === "future" ? "This period hasn't started yet." : "No paid or pending expenses in this period."}
               </Text>
             </Card>
@@ -315,7 +315,7 @@ export function ReportsScreen() {
                     />
                   </View>
                   {data.trend.length > 120 ? (
-                    <Text style={{ color: colors.textMuted }}>Too many {data.granularity}s to draw. Pick Weekly or Monthly, or see the table.</Text>
+                    <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted }}>Too many {data.granularity}s to draw. Pick Weekly or Monthly, or see the table.</Text>
                   ) : (
                     <View accessible accessibilityLabel={`Bar chart of spending per ${data.granularity}. Highest ${formatPaise(trendMax)}. Use Show as table for every value.`}>
                       <BarChart
@@ -333,8 +333,8 @@ export function ReportsScreen() {
                         noOfSections={3}
                         yAxisLabelWidth={48}
                         formatYLabel={(v: string) => `₹${Math.round(Number(v)).toLocaleString("en-IN")}`}
-                        yAxisTextStyle={{ color: colors.textMuted, fontSize: 10 }}
-                        xAxisLabelTextStyle={{ color: colors.textMuted, fontSize: 9 }}
+                        yAxisTextStyle={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: 10 }}
+                        xAxisLabelTextStyle={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: 9 }}
                         xAxisColor={colors.border}
                         yAxisThickness={0}
                         rulesType="dashed"
@@ -345,11 +345,11 @@ export function ReportsScreen() {
                     </View>
                   )}
                   <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", marginTop: spacing.sm }}>
-                    <Text style={{ color: colors.textMuted, fontSize: type.caption }}>Legend: </Text>
+                    <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption }}>Legend: </Text>
                     <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: colors.primary, marginRight: spacing.xs }} />
-                    <Text style={{ color: colors.textMuted, fontSize: type.caption, marginRight: spacing.md }}>full {data.granularity}</Text>
+                    <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption, marginRight: spacing.md }}>full {data.granularity}</Text>
                     <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: colors.textFaint, marginRight: spacing.xs }} />
-                    <Text style={{ color: colors.textMuted, fontSize: type.caption }}>partial {data.granularity} (cut by the range or not over yet)</Text>
+                    <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption }}>partial {data.granularity} (cut by the range or not over yet)</Text>
                   </View>
                   <Pressable
                     accessibilityRole="button"
@@ -357,12 +357,12 @@ export function ReportsScreen() {
                     style={({ pressed }) => ({ minHeight: 44, flexDirection: "row", alignItems: "center", alignSelf: "flex-start", marginTop: spacing.sm, opacity: pressed ? 0.7 : 1 })}
                   >
                     <Ionicons name={showTable ? "chevron-up" : "list-outline"} size={16} color={colors.primary} style={{ marginRight: spacing.xs }} />
-                    <Text style={{ color: colors.primary, fontWeight: "600", fontSize: type.body }}>{showTable ? "Hide table" : "Show as table"}</Text>
+                    <Text style={{ fontFamily: FONT_FAMILY, color: colors.primary, fontWeight: "600", fontSize: type.body }}>{showTable ? "Hide table" : "Show as table"}</Text>
                   </Pressable>
                   {showTable
                     ? data.trend.map((p) => (
                         <View key={p.key} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: spacing.sm, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.divider }}>
-                          <Text style={{ color: colors.text, flex: 1, fontSize: type.small }}>
+                          <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, flex: 1, fontSize: type.small }}>
                             {p.longLabel}
                             {p.partial ? " (partial)" : ""}
                           </Text>
@@ -377,9 +377,9 @@ export function ReportsScreen() {
               {card(
                 "By merchant",
                 <>
-                  {data.merchants.length ? barList(data.merchants.slice(0, 10).map((m) => ({ key: m.id, ...m }))) : <Text style={{ color: colors.textMuted }}>No merchants recorded.</Text>}
-                  {data.merchants.length > 10 ? <Text style={{ color: colors.textMuted, fontSize: type.small }}>+ {data.merchants.length - 10} more merchants</Text> : null}
-                  {data.noMerchantPaise > 0 ? <Text style={{ color: colors.textMuted, fontSize: type.small }}>No merchant: {formatPaise(data.noMerchantPaise)}</Text> : null}
+                  {data.merchants.length ? barList(data.merchants.slice(0, 10).map((m) => ({ key: m.id, ...m }))) : <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted }}>No merchants recorded.</Text>}
+                  {data.merchants.length > 10 ? <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small }}>+ {data.merchants.length - 10} more merchants</Text> : null}
+                  {data.noMerchantPaise > 0 ? <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small }}>No merchant: {formatPaise(data.noMerchantPaise)}</Text> : null}
                 </>,
                 "counted total per merchant ÷ the period total. Expenses without a merchant are shown separately.",
               )}

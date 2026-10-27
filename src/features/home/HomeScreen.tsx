@@ -15,7 +15,7 @@ import { SectionHeader } from "../../components/SectionHeader";
 import { TransactionRow } from "../../components/TransactionRow";
 import { useRepositories } from "../../db/DatabaseProvider";
 import { useDataVersion } from "../../state/dataEvents";
-import { MONEY } from "../../theme/tokens";
+import { FONT_FAMILY, MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { addMonths, monthLabel, monthOf, todayLocal, YearMonth } from "../../utils/date";
 import { formatPaise } from "../../utils/money";
@@ -68,7 +68,7 @@ export function HomeScreen() {
     <Card style={{ flex: 1, padding: spacing.md + 2 }}>
       <View accessible accessibilityLabel={`${label}: ${value}`}>
         <IconTile icon={icon} color={tint} size={32} />
-        <Text numberOfLines={2} style={{ color: colors.textMuted, fontSize: type.caption, marginTop: spacing.sm + 2 }}>{label}</Text>
+        <Text numberOfLines={2} style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption, marginTop: spacing.sm + 2 }}>{label}</Text>
         <Text numberOfLines={1} adjustsFontSizeToFit style={{ ...MONEY, color: colors.text, fontSize: type.bodyLarge, fontWeight: "700", marginTop: 2, letterSpacing: -0.3 }}>
           {value}
         </Text>
@@ -110,7 +110,7 @@ export function HomeScreen() {
           >
             <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
               <View style={{ flex: 1 }} accessible accessibilityLabel={`Spent in ${monthLabel(month)}: ${formatPaise(d.summary.totalPaise)}. ${d.comparison.label}`}>
-                <Text style={{ color: colors.onHeroMuted, fontSize: type.small, fontWeight: "500" }}>Spent in {monthLabel(month)}</Text>
+                <Text style={{ fontFamily: FONT_FAMILY, color: colors.onHeroMuted, fontSize: type.small, fontWeight: "500" }}>Spent in {monthLabel(month)}</Text>
                 <Text
                   numberOfLines={1}
                   adjustsFontSizeToFit
@@ -133,7 +133,7 @@ export function HomeScreen() {
                 >
                   <ProgressRing size={76} stroke={7} progress={overall.percentUsed / 100} color={ringColor} track={colors.heroChip}>
                     <Text style={{ ...MONEY, color: colors.onHero, fontSize: type.body, fontWeight: "700" }}>{overall.percentUsed}%</Text>
-                    <Text style={{ color: colors.onHeroMuted, fontSize: 10, fontWeight: "500" }}>budget</Text>
+                    <Text style={{ fontFamily: FONT_FAMILY, color: colors.onHeroMuted, fontSize: 10, fontWeight: "500" }}>budget</Text>
                   </ProgressRing>
                 </View>
               ) : null}
@@ -194,7 +194,7 @@ export function HomeScreen() {
               ) : (
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <IconTile icon="flag-outline" color={colors.primary} size={36} />
-                  <Text style={{ color: colors.textMuted, fontSize: type.body, flex: 1, marginLeft: spacing.md }}>Set a monthly budget to see how much is left.</Text>
+                  <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.body, flex: 1, marginLeft: spacing.md }}>Set a monthly budget to see how much is left.</Text>
                 </View>
               )}
             </Card>
@@ -206,7 +206,7 @@ export function HomeScreen() {
             <SectionHeader title="Spending by category" />
             <Card>
               {d.categories.length === 0 ? (
-                <Text style={{ color: colors.textMuted, fontSize: type.body }}>No spending in {monthLabel(month)}.</Text>
+                <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.body }}>No spending in {monthLabel(month)}.</Text>
               ) : (
                 <CategoryBreakdown shares={d.categories} totalPaise={d.summary.totalPaise} />
               )}
@@ -219,7 +219,7 @@ export function HomeScreen() {
             <SectionHeader title={`Recent in ${monthLabel(month)}`} actionLabel="See all" actionAccessibilityLabel="See all expenses" onAction={() => router.navigate("/history")} />
             <Card padded={false} style={{ overflow: "hidden" }}>
               {d.recent.length === 0 ? (
-                <Text style={{ color: colors.textMuted, fontSize: type.body, padding: spacing.lg }}>No expenses in {monthLabel(month)}.</Text>
+                <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.body, padding: spacing.lg }}>No expenses in {monthLabel(month)}.</Text>
               ) : (
                 d.recent.map((t, i) => (
                   <View key={t.id}>
@@ -240,8 +240,8 @@ export function HomeScreen() {
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + spacing.md, paddingBottom: spacing.xxl }}>
         <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.lg, marginBottom: spacing.lg }}>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "500" }}>{greeting(new Date().getHours())}</Text>
-            <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.headline, fontWeight: "800", letterSpacing: -0.8, marginTop: 2 }}>
+            <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, fontWeight: "500" }}>{greeting(new Date().getHours())}</Text>
+            <Text accessibilityRole="header" style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.headline, fontWeight: "800", letterSpacing: -0.8, marginTop: 2 }}>
               Meow
             </Text>
           </View>
@@ -253,7 +253,7 @@ export function HomeScreen() {
               style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", minHeight: 40, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: pressed ? colors.primarySoft : colors.surface, borderWidth: 1, borderColor: colors.border })}
             >
               <Ionicons name="today-outline" size={16} color={colors.primary} style={{ marginRight: spacing.xs }} />
-              <Text style={{ color: colors.primary, fontWeight: "600", fontSize: type.small }}>Back to this month</Text>
+              <Text style={{ fontFamily: FONT_FAMILY, color: colors.primary, fontWeight: "600", fontSize: type.small }}>Back to this month</Text>
             </Pressable>
           ) : null}
         </View>

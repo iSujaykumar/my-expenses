@@ -3,7 +3,7 @@ import { Pressable, Text, View } from "react-native";
 
 import { PAYMENT_METHOD_LABELS } from "../constants/categories";
 import { TransactionWithDetails } from "../repo/transactions";
-import { MONEY } from "../theme/tokens";
+import { FONT_FAMILY, MONEY } from "../theme/tokens";
 import { useTheme } from "../theme/useTheme";
 import { formatPaise } from "../utils/money";
 import { CategoryIcon } from "./CategoryIcon";
@@ -40,12 +40,12 @@ export const TransactionRow = memo(function TransactionRow({
       <CategoryIcon icon={t.categoryIcon} color={t.categoryColor} size={42} />
       <View style={{ flex: 1, marginLeft: spacing.md }}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text numberOfLines={1} style={{ color: colors.text, fontSize: type.body, fontWeight: "600", flexShrink: 1 }}>
+          <Text numberOfLines={1} style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.body, fontWeight: "600", flexShrink: 1 }}>
             {title}
           </Text>
           <StatusBadge status={t.status} />
         </View>
-        <Text numberOfLines={1} style={{ color: colors.textMuted, fontSize: type.small, marginTop: 2 }}>
+        <Text numberOfLines={1} style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, marginTop: 2 }}>
           {subtitle}
         </Text>
       </View>

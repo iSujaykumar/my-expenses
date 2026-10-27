@@ -14,7 +14,7 @@ import { existingSampleIds, loadSampleData, removeSampleData, SAMPLE_ITEMS, samp
 import { useRepositories } from "../../db/DatabaseProvider";
 import { useFormatDate } from "../../state/AppSettings";
 import { notifyDataChanged, useDataVersion } from "../../state/dataEvents";
-import { MONEY } from "../../theme/tokens";
+import { FONT_FAMILY, MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { parseDateString, toDateString, todayLocal } from "../../utils/date";
 import { formatPaise } from "../../utils/money";
@@ -117,39 +117,39 @@ export function SampleDataScreen() {
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ScreenHeader title="Sample expenses" onBack={() => router.back()} />
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}>
-        <Text style={{ color: colors.textMuted, fontSize: type.small, lineHeight: 19, paddingHorizontal: spacing.xs }}>
+        <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, lineHeight: 19, paddingHorizontal: spacing.xs }}>
           Your own list of past purchases. Nothing is added until you tap &quot;Add&quot; and confirm. The real dates are unknown, so every date starts as today: set one date for all, or tap a date to change it. You can also edit each expense afterwards.
         </Text>
         {loaded.size > 0 ? (
           <Card style={{ marginTop: spacing.lg }}>
-            <Text style={{ color: colors.textMuted }}>{loaded.size} sample expenses are already in the app.</Text>
+            <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted }}>{loaded.size} sample expenses are already in the app.</Text>
             {button(`Remove ${loaded.size} sample expenses`, remove, "danger", false, "trash-outline")}
           </Card>
         ) : null}
         {count === 0 ? (
-          <Text style={{ color: colors.textMuted, marginTop: spacing.lg, textAlign: "center" }}>All sample expenses are already added.</Text>
+          <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, marginTop: spacing.lg, textAlign: "center" }}>All sample expenses are already added.</Text>
         ) : (
           <>
             <View accessible style={{ marginTop: spacing.lg, padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.primarySoft }}>
               <Text style={{ ...MONEY, color: colors.onPrimarySoft, fontWeight: "800", fontSize: type.title }}>
                 {count} expenses · {formatPaise(total)}
               </Text>
-              <Text style={{ color: colors.onPrimarySoft, fontSize: type.small, marginTop: 2, opacity: 0.85 }}>Count and total are worked out from the list below.</Text>
-              {flagged ? <Text style={{ color: colors.warning, fontSize: type.small, marginTop: spacing.xs, fontWeight: "600" }}>{flagged} items are flagged ⚑ as uncertain. Check them after adding.</Text> : null}
+              <Text style={{ fontFamily: FONT_FAMILY, color: colors.onPrimarySoft, fontSize: type.small, marginTop: 2, opacity: 0.85 }}>Count and total are worked out from the list below.</Text>
+              {flagged ? <Text style={{ fontFamily: FONT_FAMILY, color: colors.warning, fontSize: type.small, marginTop: spacing.xs, fontWeight: "600" }}>{flagged} items are flagged ⚑ as uncertain. Check them after adding.</Text> : null}
             </View>
             {button("Set one date for all…", setAll, "outline", false, "calendar-outline")}
             <Card padded={false} style={{ marginTop: spacing.md }}>
               {items.map((i, idx) => (
                 <View key={i.key} style={{ paddingVertical: spacing.sm, paddingHorizontal: spacing.lg, borderTopWidth: idx === 0 ? 0 : StyleSheet.hairlineWidth, borderTopColor: colors.divider }}>
                   <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", paddingTop: spacing.xs }}>
-                    <Text style={{ color: colors.text, fontWeight: "600", flexShrink: 1 }}>
+                    <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontWeight: "600", flexShrink: 1 }}>
                       {i.flag ? "⚑ " : ""}
                       {i.description}
                     </Text>
                     <Text style={{ ...MONEY, color: colors.text, fontWeight: "700" }}>{formatPaise(i.rupees * 100)}</Text>
                   </View>
                   <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
-                    <Text style={{ color: colors.textMuted, fontSize: type.small }}>
+                    <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small }}>
                       {categoryName(i.categoryId)}
                       {i.merchant ? ` · ${i.merchant}` : ""}
                     </Text>
@@ -160,10 +160,10 @@ export function SampleDataScreen() {
                       style={{ minHeight: 44, flexDirection: "row", alignItems: "center" }}
                     >
                       <Ionicons name="calendar-outline" size={14} color={colors.primary} style={{ marginRight: 4 }} />
-                      <Text style={{ color: colors.primary, fontWeight: "600", fontSize: type.small }}>{formatDate(dates[i.key])}</Text>
+                      <Text style={{ fontFamily: FONT_FAMILY, color: colors.primary, fontWeight: "600", fontSize: type.small }}>{formatDate(dates[i.key])}</Text>
                     </Pressable>
                   </View>
-                  {i.flag ? <Text style={{ color: colors.warning, fontSize: type.caption, paddingBottom: spacing.xs }}>{i.flag}</Text> : null}
+                  {i.flag ? <Text style={{ fontFamily: FONT_FAMILY, color: colors.warning, fontSize: type.caption, paddingBottom: spacing.xs }}>{i.flag}</Text> : null}
                 </View>
               ))}
             </Card>

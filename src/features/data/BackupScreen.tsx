@@ -16,7 +16,7 @@ import { pickTextFile } from "../../data/files";
 import { applyImport, ImportMode, ImportPlan, planImport } from "../../data/importBackup";
 import { useRepositories } from "../../db/DatabaseProvider";
 import { notifyDataChanged } from "../../state/dataEvents";
-import { categoryPalette } from "../../theme/tokens";
+import { categoryPalette, FONT_FAMILY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { DEDUPE_EXPLANATION, ImportPreview } from "./ImportPreview";
 
@@ -138,11 +138,11 @@ export function BackupScreen() {
     <Card style={{ marginBottom: spacing.md }}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <IconTile icon={icon} color={tint} size={40} />
-        <Text accessibilityRole="header" style={{ flex: 1, color: colors.text, fontSize: type.bodyLarge, fontWeight: "700", marginLeft: spacing.md }}>
+        <Text accessibilityRole="header" style={{ fontFamily: FONT_FAMILY, flex: 1, color: colors.text, fontSize: type.bodyLarge, fontWeight: "700", marginLeft: spacing.md }}>
           {title}
         </Text>
       </View>
-      <Text style={{ color: colors.textMuted, fontSize: type.small, lineHeight: 19, marginTop: spacing.md, marginBottom: spacing.sm }}>{body}</Text>
+      <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, lineHeight: 19, marginTop: spacing.md, marginBottom: spacing.sm }}>{body}</Text>
       {children}
     </Card>
   );
@@ -158,7 +158,7 @@ export function BackupScreen() {
         {busy ? (
           <View style={{ flexDirection: "row", alignItems: "center", marginBottom: spacing.md, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.primarySoft }}>
             <ActivityIndicator color={colors.onPrimarySoft} />
-            <Text style={{ color: colors.onPrimarySoft, marginLeft: spacing.sm, fontWeight: "600" }}>{busy}</Text>
+            <Text style={{ fontFamily: FONT_FAMILY, color: colors.onPrimarySoft, marginLeft: spacing.sm, fontWeight: "600" }}>{busy}</Text>
           </View>
         ) : null}
         {card(
@@ -185,14 +185,14 @@ export function BackupScreen() {
             {fileError ? (
               <View style={{ flexDirection: "row", alignItems: "flex-start", marginTop: spacing.md, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.dangerSurface }}>
                 <Ionicons name="alert-circle" size={18} color={colors.danger} style={{ marginRight: spacing.sm }} />
-                <Text style={{ flex: 1, color: colors.danger, fontWeight: "600" }}>{fileError}</Text>
+                <Text style={{ fontFamily: FONT_FAMILY, flex: 1, color: colors.danger, fontWeight: "600" }}>{fileError}</Text>
               </View>
             ) : null}
             {loaded ? (
               <View style={{ marginTop: spacing.lg }}>
                 <View style={{ flexDirection: "row", alignItems: "center", marginBottom: spacing.md }}>
                   <Ionicons name="document-attach-outline" size={16} color={colors.textMuted} style={{ marginRight: spacing.xs }} />
-                  <Text style={{ flex: 1, color: colors.text, fontSize: type.small }}>
+                  <Text style={{ fontFamily: FONT_FAMILY, flex: 1, color: colors.text, fontSize: type.small }}>
                     {loaded.fileName} · made {loaded.exportedAt.slice(0, 10)} · app {loaded.appVersion}
                   </Text>
                 </View>
@@ -205,7 +205,7 @@ export function BackupScreen() {
                     { value: "replace", label: "Replace everything" },
                   ]}
                 />
-                <Text style={{ color: colors.textMuted, fontSize: type.caption, lineHeight: 17, marginVertical: spacing.md }}>
+                <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption, lineHeight: 17, marginVertical: spacing.md }}>
                   {loaded.plan.mode === "merge" ? DEDUPE_EXPLANATION : "Replace deletes everything on this phone and restores the backup exactly. It happens in one step: if anything fails, nothing changes."}
                 </Text>
                 <ImportPreview plan={loaded.plan} />

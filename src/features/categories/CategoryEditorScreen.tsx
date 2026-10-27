@@ -13,7 +13,7 @@ import { useSnackbar } from "../../components/Snackbar";
 import { useRepositories } from "../../db/DatabaseProvider";
 import { Category } from "../../repo/categories";
 import { notifyDataChanged, useDataVersion } from "../../state/dataEvents";
-import { categoryIcons, categoryPalette } from "../../theme/tokens";
+import { categoryIcons, categoryPalette, FONT_FAMILY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { CategoryForm } from "./CategoryForm";
 
@@ -161,7 +161,7 @@ export function CategoryEditorScreen({ id }: { id?: string }) {
             {category?.isArchived ? (
               <View style={{ flexDirection: "row", alignItems: "flex-start", backgroundColor: colors.warningSurface, padding: spacing.md, borderRadius: radii.md, marginBottom: spacing.lg }}>
                 <Ionicons name="archive-outline" size={18} color={colors.warning} style={{ marginRight: spacing.sm, marginTop: 1 }} />
-                <Text style={{ color: colors.warning, flex: 1, fontSize: type.body }}>This category is archived. It is hidden when adding expenses but kept in history.</Text>
+                <Text style={{ fontFamily: FONT_FAMILY, color: colors.warning, flex: 1, fontSize: type.body }}>This category is archived. It is hidden when adding expenses but kept in history.</Text>
               </View>
             ) : null}
             <CategoryForm
@@ -172,7 +172,7 @@ export function CategoryEditorScreen({ id }: { id?: string }) {
             />
             {category ? (
               <Card style={{ marginTop: spacing.xl }}>
-                <Text style={{ color: colors.textMuted, fontSize: type.small, marginBottom: spacing.sm }}>
+                <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, marginBottom: spacing.sm }}>
                   {count} {count === 1 ? "expense uses" : "expenses use"} this category. Renaming or recolouring keeps all of them.
                 </Text>
                 {count > 0 ? button("Move expenses to another category", () => setMoveMode("move"), false, "swap-horizontal-outline") : null}

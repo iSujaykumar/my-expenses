@@ -14,7 +14,7 @@ import { SegmentedControl } from "../../components/SegmentedControl";
 import { PAYMENT_METHOD_LABELS, PAYMENT_METHODS, PaymentMethod, STATUSES } from "../../constants/categories";
 import { ValidationError } from "../../db/types";
 import { Category } from "../../repo/categories";
-import { categoryColor, MONEY } from "../../theme/tokens";
+import { categoryColor, FONT_FAMILY, MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { hapticSuccess } from "../../utils/haptics";
 import { ExpenseFormErrors, ExpenseFormValues, validateExpenseForm, ValidatedExpense } from "./form";
@@ -115,7 +115,7 @@ export function ExpenseForm(props: ExpenseFormProps) {
 
   const group = (title: string, children: ReactNode) => (
     <View style={{ marginBottom: spacing.lg }}>
-      <Text accessibilityRole="header" style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "600", letterSpacing: 0.4, textTransform: "uppercase", marginBottom: spacing.sm, marginLeft: spacing.xs }}>
+      <Text accessibilityRole="header" style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, fontWeight: "600", letterSpacing: 0.4, textTransform: "uppercase", marginBottom: spacing.sm, marginLeft: spacing.xs }}>
         {title}
       </Text>
       <Card style={{ paddingBottom: 0 }}>{children}</Card>
@@ -128,15 +128,15 @@ export function ExpenseForm(props: ExpenseFormProps) {
         {generalError ? (
           <View style={{ flexDirection: "row", alignItems: "flex-start", backgroundColor: colors.dangerSurface, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.lg }}>
             <Ionicons name="alert-circle" size={18} color={colors.danger} style={{ marginRight: spacing.sm, marginTop: 1 }} />
-            <Text accessibilityLiveRegion="polite" style={{ color: colors.danger, fontSize: type.body, flex: 1 }}>
+            <Text accessibilityLiveRegion="polite" style={{ fontFamily: FONT_FAMILY, color: colors.danger, fontSize: type.body, flex: 1 }}>
               {generalError}
             </Text>
           </View>
         ) : null}
 
         <Card style={{ alignItems: "center", paddingVertical: spacing.xl, marginBottom: spacing.lg, borderColor: errors.amount ? colors.danger : colors.border, borderWidth: errors.amount ? 1.5 : StyleSheet.hairlineWidth }}>
-          <Text style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "600" }}>
-            Amount <Text style={{ color: colors.danger }}>*</Text>
+          <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, fontWeight: "600" }}>
+            Amount <Text style={{ fontFamily: FONT_FAMILY, color: colors.danger }}>*</Text>
           </Text>
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: spacing.sm, alignSelf: "stretch" }}>
             <Text style={{ ...MONEY, color: colors.textMuted, fontSize: type.headline, fontWeight: "600", marginRight: spacing.sm }}>Rs</Text>
@@ -153,7 +153,7 @@ export function ExpenseForm(props: ExpenseFormProps) {
             />
           </View>
           {errors.amount ? (
-            <Text accessibilityLiveRegion="polite" style={{ color: colors.danger, fontSize: type.small, fontWeight: "500", marginTop: spacing.sm }}>
+            <Text accessibilityLiveRegion="polite" style={{ fontFamily: FONT_FAMILY, color: colors.danger, fontSize: type.small, fontWeight: "500", marginTop: spacing.sm }}>
               {errors.amount}
             </Text>
           ) : null}
@@ -214,7 +214,7 @@ export function ExpenseForm(props: ExpenseFormProps) {
                       <IconTile icon={c.icon} color={categoryColor(c.color)} size={42} />
                       <Text
                         numberOfLines={2}
-                        style={{ color: selected ? colors.onPrimarySoft : colors.text, fontSize: type.caption, fontWeight: selected ? "600" : "500", marginTop: spacing.xs + 2, textAlign: "center" }}
+                        style={{ fontFamily: FONT_FAMILY, color: selected ? colors.onPrimarySoft : colors.text, fontSize: type.caption, fontWeight: selected ? "600" : "500", marginTop: spacing.xs + 2, textAlign: "center" }}
                       >
                         {label}
                       </Text>
@@ -289,7 +289,7 @@ export function ExpenseForm(props: ExpenseFormProps) {
               placeholder="Optional"
               placeholderTextColor={colors.textFaint}
               multiline
-              style={[notesStyle, { minHeight: 96, textAlignVertical: "top" }]}
+              style={[notesStyle, { fontFamily: FONT_FAMILY, minHeight: 96, textAlignVertical: "top" }]}
               maxLength={1000}
             />
           </FormField>,

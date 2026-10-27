@@ -3,6 +3,7 @@ import { ComponentProps } from "react";
 import { ActivityIndicator, Pressable, StyleProp, Text, ViewStyle } from "react-native";
 
 import { useTheme } from "../theme/useTheme";
+import { FONT_FAMILY } from "../theme/tokens";
 
 export type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
 
@@ -61,7 +62,7 @@ export function Button({
       ]}
     >
       {busy ? <ActivityIndicator color={palette.fg} style={{ marginRight: spacing.sm }} /> : icon ? <Ionicons name={icon} size={19} color={palette.fg} style={{ marginRight: spacing.sm }} /> : null}
-      <Text style={{ color: palette.fg, fontSize: type.body, fontWeight: "700", letterSpacing: 0.1 }}>{label}</Text>
+      <Text style={{ fontFamily: FONT_FAMILY, color: palette.fg, fontSize: type.body, fontWeight: "700", letterSpacing: 0.1 }}>{label}</Text>
     </Pressable>
   );
 }

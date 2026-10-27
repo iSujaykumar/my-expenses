@@ -14,6 +14,7 @@ import { RESET_CONFIRM_WORD, resetAllData } from "../../data/reset";
 import { useRepositories } from "../../db/DatabaseProvider";
 import { notifyDataChanged } from "../../state/dataEvents";
 import { useTheme } from "../../theme/useTheme";
+import { FONT_FAMILY } from "../../theme/tokens";
 
 export function isResetConfirmed(text: string): boolean {
   return text.trim() === RESET_CONFIRM_WORD;
@@ -53,7 +54,7 @@ export function ResetScreen() {
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}>
           <View style={{ flexDirection: "row", alignItems: "flex-start", padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.dangerSurface, marginBottom: spacing.lg }}>
             <Ionicons name="warning" size={22} color={colors.danger} style={{ marginRight: spacing.md, marginTop: 1 }} />
-            <Text style={{ flex: 1, color: colors.text, fontSize: type.body, lineHeight: 22 }}>
+            <Text style={{ fontFamily: FONT_FAMILY, flex: 1, color: colors.text, fontSize: type.body, lineHeight: 22 }}>
               This permanently deletes every expense, merchant, budget, custom category and setting on this phone. The starter categories come back. It cannot be undone.
             </Text>
           </View>
@@ -65,7 +66,7 @@ export function ResetScreen() {
             onPress={() => exportBackup(repos).catch(() => Alert.alert("Backup failed", "Could not create the backup file."))}
           />
           <Card style={{ marginTop: spacing.lg }}>
-            <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "700" }}>Type {RESET_CONFIRM_WORD} to confirm</Text>
+            <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.body, fontWeight: "700" }}>Type {RESET_CONFIRM_WORD} to confirm</Text>
             <TextInput
               testID="reset-input"
               accessibilityLabel={`Type ${RESET_CONFIRM_WORD} to confirm`}
@@ -77,7 +78,7 @@ export function ResetScreen() {
               autoCorrect={false}
               placeholder={RESET_CONFIRM_WORD}
               placeholderTextColor={colors.textFaint}
-              style={[inputStyle, { marginTop: spacing.sm, letterSpacing: 2, fontWeight: "700" }]}
+              style={[inputStyle, { fontFamily: FONT_FAMILY, marginTop: spacing.sm, letterSpacing: 2, fontWeight: "700" }]}
             />
             <Button
               testID="reset-button"

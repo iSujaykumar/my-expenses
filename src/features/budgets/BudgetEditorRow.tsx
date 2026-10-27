@@ -6,7 +6,7 @@ import { Button } from "../../components/Button";
 import { Card } from "../../components/Card";
 import { IconTile } from "../../components/IconTile";
 import { useInputStyle } from "../../components/inputStyle";
-import { categoryColor, MONEY } from "../../theme/tokens";
+import { categoryColor, FONT_FAMILY, MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { paiseToInputString, parseRupeesToPaise } from "../../utils/money";
 
@@ -53,7 +53,7 @@ export function BudgetEditorRow(props: {
     <Card testID={props.testID} style={{ marginBottom: spacing.md }}>
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: spacing.md }}>
         <IconTile icon={props.icon ?? (props.color ? "pricetag-outline" : "wallet-outline")} color={tint} size={36} />
-        <Text style={{ flex: 1, color: colors.text, fontSize: type.bodyLarge, fontWeight: "700", marginLeft: spacing.md }}>{props.title}</Text>
+        <Text style={{ fontFamily: FONT_FAMILY, flex: 1, color: colors.text, fontSize: type.bodyLarge, fontWeight: "700", marginLeft: spacing.md }}>{props.title}</Text>
         {props.onToggle ? (
           <Switch
             accessibilityLabel={`${props.title} budget ${props.enabled ? "on" : "off"}`}
@@ -93,8 +93,8 @@ export function BudgetEditorRow(props: {
           style={{ marginLeft: spacing.sm, paddingHorizontal: spacing.lg }}
         />
       </View>
-      {error ? <Text style={{ color: colors.danger, fontSize: type.small, fontWeight: "500", marginTop: spacing.sm }}>{error}</Text> : null}
-      {!props.enabled && props.amountPaise ? <Text style={{ color: colors.textMuted, fontSize: type.small, marginTop: spacing.sm }}>Off. Not shown on the dashboard.</Text> : null}
+      {error ? <Text style={{ fontFamily: FONT_FAMILY, color: colors.danger, fontSize: type.small, fontWeight: "500", marginTop: spacing.sm }}>{error}</Text> : null}
+      {!props.enabled && props.amountPaise ? <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, marginTop: spacing.sm }}>Off. Not shown on the dashboard.</Text> : null}
       {props.onRemove ? (
         <Pressable
           accessibilityRole="button"
@@ -104,7 +104,7 @@ export function BudgetEditorRow(props: {
           style={{ alignSelf: "flex-start", marginTop: spacing.md, flexDirection: "row", alignItems: "center", minHeight: 32 }}
         >
           <Ionicons name="trash-outline" size={15} color={colors.danger} style={{ marginRight: spacing.xs }} />
-          <Text style={{ color: colors.danger, fontWeight: "600", fontSize: type.small }}>Remove budget</Text>
+          <Text style={{ fontFamily: FONT_FAMILY, color: colors.danger, fontWeight: "600", fontSize: type.small }}>Remove budget</Text>
         </Pressable>
       ) : null}
     </Card>

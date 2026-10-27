@@ -7,7 +7,7 @@ import { FormField } from "../../components/FormField";
 import { IconTile, withAlpha } from "../../components/IconTile";
 import { useInputStyle } from "../../components/inputStyle";
 import { ValidationError } from "../../db/types";
-import { categoryColor, categoryIcons, categoryPalette } from "../../theme/tokens";
+import { categoryColor, categoryIcons, categoryPalette, FONT_FAMILY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 
 export interface CategoryFormValues {
@@ -54,11 +54,11 @@ export function CategoryForm(props: { initial: CategoryFormValues; submitLabel: 
     <View>
       <View style={{ alignItems: "center", marginBottom: spacing.xl }} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
         <IconTile icon={values.icon} color={shownColor} size={64} />
-        <Text numberOfLines={1} style={{ color: values.name.trim() ? colors.text : colors.textMuted, fontSize: type.bodyLarge, fontWeight: "600", marginTop: spacing.sm }}>
+        <Text numberOfLines={1} style={{ fontFamily: FONT_FAMILY, color: values.name.trim() ? colors.text : colors.textMuted, fontSize: type.bodyLarge, fontWeight: "600", marginTop: spacing.sm }}>
           {values.name.trim() || "New category"}
         </Text>
       </View>
-      {errors.general ? <Text style={{ color: colors.danger, marginBottom: spacing.md }}>{errors.general}</Text> : null}
+      {errors.general ? <Text style={{ fontFamily: FONT_FAMILY, color: colors.danger, marginBottom: spacing.md }}>{errors.general}</Text> : null}
       <FormField label="Name" required error={errors.name}>
         <TextInput
           testID="category-name-input"

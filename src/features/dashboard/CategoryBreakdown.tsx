@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
 
-import { categoryColor, MONEY } from "../../theme/tokens";
+import { categoryColor, FONT_FAMILY, MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { formatPaise } from "../../utils/money";
 import { CategoryShare, chartSlices } from "./stats";
@@ -23,7 +23,7 @@ export function CategoryBreakdown({ shares, totalPaise }: { shares: CategoryShar
           strokeColor={colors.surface}
           centerLabelComponent={() => (
             <View style={{ alignItems: "center" }}>
-              <Text style={{ color: colors.textMuted, fontSize: type.caption, fontWeight: "500" }}>Total</Text>
+              <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption, fontWeight: "500" }}>Total</Text>
               <Text style={{ ...MONEY, color: colors.text, fontSize: type.bodyLarge, fontWeight: "700", marginTop: 2, letterSpacing: -0.3 }}>
                 {formatPaise(totalPaise, { hideZeroPaise: true })}
               </Text>
@@ -39,9 +39,9 @@ export function CategoryBreakdown({ shares, totalPaise }: { shares: CategoryShar
           style={{ flexDirection: "row", alignItems: "center", paddingVertical: spacing.sm }}
         >
           <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: categoryColor(s.color), marginRight: spacing.md }} />
-          <Text numberOfLines={1} style={{ flex: 1, color: colors.text, fontSize: type.body }}>
+          <Text numberOfLines={1} style={{ fontFamily: FONT_FAMILY, flex: 1, color: colors.text, fontSize: type.body }}>
             {s.name}
-            {s.isArchived ? <Text style={{ color: colors.textMuted }}> (archived)</Text> : null}
+            {s.isArchived ? <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted }}> (archived)</Text> : null}
           </Text>
           <Text style={{ ...MONEY, color: colors.text, fontSize: type.body, fontWeight: "600" }}>{formatPaise(s.totalPaise)}</Text>
           <Text style={{ ...MONEY, color: colors.textMuted, fontSize: type.small, width: 56, textAlign: "right" }}>{s.percent.toFixed(1)}%</Text>

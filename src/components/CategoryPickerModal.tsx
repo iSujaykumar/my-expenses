@@ -5,6 +5,7 @@ import { Category } from "../repo/categories";
 import { useReducedMotion } from "../theme/motion";
 import { useTheme } from "../theme/useTheme";
 import { CategoryIcon } from "./CategoryIcon";
+import { FONT_FAMILY } from "../theme/tokens";
 
 /** Pick one category from a list (Android back closes it). */
 export function CategoryPickerModal(props: { visible: boolean; title: string; message?: string; categories: Category[]; onPick: (c: Category) => void; onClose: () => void }) {
@@ -15,15 +16,15 @@ export function CategoryPickerModal(props: { visible: boolean; title: string; me
     <Modal visible={props.visible} animationType={reduceMotion ? "none" : "slide"} onRequestClose={props.onClose} statusBarTranslucent navigationBarTranslucent>
       <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: insets.top, paddingBottom: insets.bottom }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: spacing.lg }}>
-          <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.title, fontWeight: "700", flex: 1 }}>{props.title}</Text>
+          <Text accessibilityRole="header" style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.title, fontWeight: "700", flex: 1 }}>{props.title}</Text>
           <Pressable accessibilityRole="button" onPress={props.onClose} hitSlop={12}>
-            <Text style={{ color: colors.primary, fontWeight: "600", fontSize: type.body }}>Cancel</Text>
+            <Text style={{ fontFamily: FONT_FAMILY, color: colors.primary, fontWeight: "600", fontSize: type.body }}>Cancel</Text>
           </Pressable>
         </View>
-        {props.message ? <Text style={{ color: colors.textMuted, fontSize: type.body, paddingHorizontal: spacing.lg, marginBottom: spacing.sm }}>{props.message}</Text> : null}
+        {props.message ? <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.body, paddingHorizontal: spacing.lg, marginBottom: spacing.sm }}>{props.message}</Text> : null}
         <ScrollView>
           {props.categories.length === 0 ? (
-            <Text style={{ color: colors.textMuted, padding: spacing.lg }}>No categories available.</Text>
+            <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, padding: spacing.lg }}>No categories available.</Text>
           ) : (
             props.categories.map((c) => (
               <Pressable
@@ -34,7 +35,7 @@ export function CategoryPickerModal(props: { visible: boolean; title: string; me
                 style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.lg, paddingVertical: spacing.md, backgroundColor: pressed ? colors.surfaceAlt : colors.background })}
               >
                 <CategoryIcon icon={c.icon} color={c.color} size={40} />
-                <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "500", marginLeft: spacing.md }}>{c.name}</Text>
+                <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.body, fontWeight: "500", marginLeft: spacing.md }}>{c.name}</Text>
               </Pressable>
             ))
           )}

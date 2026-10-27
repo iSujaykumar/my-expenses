@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text } from "react-native";
 
 import { useTheme } from "../theme/useTheme";
+import { FONT_FAMILY } from "../theme/tokens";
 
 /** Big, always-visible "Add expense" button. */
 export function Fab({ onPress, label = "Add expense" }: { onPress: () => void; label?: string }) {
@@ -24,7 +25,7 @@ export function Fab({ onPress, label = "Add expense" }: { onPress: () => void; l
       ]}
     >
       <Ionicons name="add" size={26} color={colors.onPrimary} />
-      <Text style={{ color: colors.onPrimary, fontSize: type.bodyLarge, fontWeight: "700", marginLeft: spacing.sm }}>{label}</Text>
+      <Text style={{ fontFamily: FONT_FAMILY, color: colors.onPrimary, fontSize: type.bodyLarge, fontWeight: "700", marginLeft: spacing.sm }}>{label}</Text>
     </Pressable>
   );
 }

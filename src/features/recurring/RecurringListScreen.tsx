@@ -14,7 +14,7 @@ import { useRepositories } from "../../db/DatabaseProvider";
 import { RecurringTemplate } from "../../repo/recurring";
 import { useFormatDate } from "../../state/AppSettings";
 import { notifyDataChanged, useDataVersion } from "../../state/dataEvents";
-import { MONEY } from "../../theme/tokens";
+import { FONT_FAMILY, MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { formatPaise } from "../../utils/money";
 
@@ -77,7 +77,7 @@ export function RecurringListScreen() {
       style={({ pressed }) => ({ minHeight: 44, flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", borderRadius: radii.md, backgroundColor: pressed ? colors.surfaceAlt : "transparent" })}
     >
       <Ionicons name={icon} size={16} color={color} style={{ marginRight: spacing.xs }} />
-      <Text style={{ color, fontWeight: "600", fontSize: type.small }}>{label}</Text>
+      <Text style={{ fontFamily: FONT_FAMILY, color, fontWeight: "600", fontSize: type.small }}>{label}</Text>
     </Pressable>
   );
 
@@ -85,7 +85,7 @@ export function RecurringListScreen() {
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ScreenHeader title="Recurring expenses" onBack={() => router.back()} />
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}>
-        <Text style={{ color: colors.textMuted, fontSize: type.small, lineHeight: 19, marginBottom: spacing.lg, paddingHorizontal: spacing.xs }}>
+        <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, lineHeight: 19, marginBottom: spacing.lg, paddingHorizontal: spacing.xs }}>
           Templates for things you pay every week or month (rent, gym, phone). When one is due, it appears in &quot;Due soon&quot; on Home and you tap Record. Meow does not send notifications and never records anything by itself.
         </Text>
         <Button icon="add" label="Add recurring expense" onPress={() => router.push({ pathname: "/recurring/[id]", params: { id: "new" } })} style={{ marginBottom: spacing.lg }} />
@@ -95,12 +95,12 @@ export function RecurringListScreen() {
             <View style={{ flexDirection: "row", alignItems: "center", padding: spacing.lg }}>
               <CategoryIcon icon={t.categoryIcon} color={t.categoryColor} size={42} />
               <View style={{ flex: 1, marginLeft: spacing.md }}>
-                <Text style={{ color: colors.text, fontWeight: "700", fontSize: type.body }}>
+                <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontWeight: "700", fontSize: type.body }}>
                   {t.description}
                   {t.isPaused ? " (paused)" : ""}
                 </Text>
-                <Text style={{ color: colors.textMuted, fontSize: type.small, marginTop: 2 }}>{describeSchedule(t, formatDate)}</Text>
-                <Text style={{ color: colors.textMuted, fontSize: type.small }}>{t.categoryName}</Text>
+                <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, marginTop: 2 }}>{describeSchedule(t, formatDate)}</Text>
+                <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small }}>{t.categoryName}</Text>
               </View>
               <Text style={{ ...MONEY, color: colors.text, fontWeight: "700", fontSize: type.body, marginLeft: spacing.sm }}>{formatPaise(t.amountPaise)}</Text>
             </View>

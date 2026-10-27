@@ -4,6 +4,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-nati
 import { createRepositories, Repositories } from "../repo";
 import { openAppDatabase } from "./expoAdapter";
 import { DatabaseError } from "./types";
+import { FONT_FAMILY } from "../theme/tokens";
 
 const RepositoriesContext = createContext<Repositories | null>(null);
 
@@ -62,8 +63,8 @@ export function useRepositories(): Repositories {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: "center", justifyContent: "center", padding: 24 },
-  title: { fontSize: 20, fontWeight: "700", marginBottom: 8 },
-  body: { fontSize: 15, textAlign: "center", marginBottom: 16 },
+  title: { fontFamily: FONT_FAMILY, fontSize: 20, fontWeight: "700", marginBottom: 8 },
+  body: { fontFamily: FONT_FAMILY, fontSize: 15, textAlign: "center", marginBottom: 16 },
   button: { backgroundColor: "#1F6F5C", paddingHorizontal: 20, paddingVertical: 12, borderRadius: 10 },
-  buttonText: { color: "#FFFFFF", fontWeight: "600", fontSize: 16 },
+  buttonText: { fontFamily: FONT_FAMILY, color: "#FFFFFF", fontWeight: "600", fontSize: 16 },
 });

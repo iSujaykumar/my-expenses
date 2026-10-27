@@ -14,6 +14,7 @@ import { useReducedMotion } from "../../theme/motion";
 import { useTheme } from "../../theme/useTheme";
 import { monthRange, monthOf, todayLocal } from "../../utils/date";
 import { DATE_PRESET_LABELS, DatePreset, DEFAULT_FILTERS, HistoryFilters, SORT_LABELS, SortOption, toggleValue } from "./filters";
+import { FONT_FAMILY } from "../../theme/tokens";
 
 const STATUS_LABELS = { paid: "Paid", pending: "Pending", refunded: "Refunded" } as const;
 
@@ -42,7 +43,7 @@ export function FilterSheet(props: {
   const section = (title: string) => (
     <Text
       accessibilityRole="header"
-      style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "600", letterSpacing: 0.4, textTransform: "uppercase", marginTop: spacing.lg, marginBottom: spacing.sm, marginLeft: spacing.xs }}
+      style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, fontWeight: "600", letterSpacing: 0.4, textTransform: "uppercase", marginTop: spacing.lg, marginBottom: spacing.sm, marginLeft: spacing.xs }}
     >
       {title}
     </Text>
@@ -61,7 +62,7 @@ export function FilterSheet(props: {
     <Modal visible={props.visible} animationType={reduceMotion ? "none" : "slide"} onRequestClose={props.onClose} statusBarTranslucent navigationBarTranslucent>
       <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: insets.top }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing.lg, paddingVertical: spacing.md }}>
-          <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.title + 2, fontWeight: "800", letterSpacing: -0.4 }}>
+          <Text accessibilityRole="header" style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.title + 2, fontWeight: "800", letterSpacing: -0.4 }}>
             Filter & sort
           </Text>
           <Pressable
@@ -99,9 +100,9 @@ export function FilterSheet(props: {
               </View>
               {draft.datePreset === "custom" ? (
                 <View style={{ marginTop: spacing.xs, marginBottom: spacing.sm }}>
-                  <Text style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "500", marginBottom: spacing.xs }}>From</Text>
+                  <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, fontWeight: "500", marginBottom: spacing.xs }}>From</Text>
                   <DateField value={custom.start} onChange={(d) => setCustom(d, custom.end)} />
-                  <Text style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "500", marginTop: spacing.md, marginBottom: spacing.xs }}>To</Text>
+                  <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, fontWeight: "500", marginTop: spacing.md, marginBottom: spacing.xs }}>To</Text>
                   <DateField value={custom.end} onChange={(d) => setCustom(custom.start, d)} />
                 </View>
               ) : null}
@@ -127,7 +128,7 @@ export function FilterSheet(props: {
           {section("Merchant")}
           {group(
             props.merchants.length === 0 ? (
-              <Text style={{ color: colors.textMuted, fontSize: type.small, marginBottom: spacing.sm }}>No merchants yet. They appear here after you add one to an expense.</Text>
+              <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, marginBottom: spacing.sm }}>No merchants yet. They appear here after you add one to an expense.</Text>
             ) : (
               <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                 {props.merchants.map((m) => (

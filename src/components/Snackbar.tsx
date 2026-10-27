@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSegments } from "expo-router";
 
 import { useTheme } from "../theme/useTheme";
+import { FONT_FAMILY } from "../theme/tokens";
 
 export interface SnackbarOptions {
   message: string;
@@ -70,7 +71,7 @@ export function SnackbarProvider({ children }: { children: ReactNode }) {
             { bottom: snackbarBottomOffset(insets.bottom, onTabScreen), backgroundColor: colors.snackbar, borderRadius: radii.md + 2, paddingVertical: spacing.md, paddingHorizontal: spacing.lg, marginHorizontal: spacing.lg },
           ]}
         >
-          <Text style={{ color: colors.onSnackbar, fontSize: type.body, flex: 1 }}>{current.message}</Text>
+          <Text style={{ fontFamily: FONT_FAMILY, color: colors.onSnackbar, fontSize: type.body, flex: 1 }}>{current.message}</Text>
           {current.actionLabel && current.onAction ? (
             <Pressable
               accessibilityRole="button"
@@ -82,7 +83,7 @@ export function SnackbarProvider({ children }: { children: ReactNode }) {
               }}
               style={{ paddingHorizontal: spacing.sm }}
             >
-              <Text style={{ color: colors.snackbarAction, fontWeight: "700", fontSize: type.body, letterSpacing: 0.2 }}>{current.actionLabel}</Text>
+              <Text style={{ fontFamily: FONT_FAMILY, color: colors.snackbarAction, fontWeight: "700", fontSize: type.body, letterSpacing: 0.2 }}>{current.actionLabel}</Text>
             </Pressable>
           ) : null}
         </View>

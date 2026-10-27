@@ -13,7 +13,7 @@ import { Merchant } from "../../repo/merchants";
 import { MAX_LIST_LIMIT, SpendingSummary, TransactionWithDetails } from "../../repo/transactions";
 import { useFormatDate } from "../../state/AppSettings";
 import { useDataVersion } from "../../state/dataEvents";
-import { MONEY } from "../../theme/tokens";
+import { FONT_FAMILY, MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { todayLocal } from "../../utils/date";
 import { formatPaise } from "../../utils/money";
@@ -94,7 +94,7 @@ export function HistoryScreen() {
       if (item.type === "header") {
         return (
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", paddingHorizontal: spacing.lg + spacing.xs, paddingTop: spacing.lg, paddingBottom: spacing.sm, backgroundColor: colors.background }}>
-            <Text accessibilityRole="header" style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "600", letterSpacing: 0.4, textTransform: "uppercase" }}>
+            <Text accessibilityRole="header" style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, fontWeight: "600", letterSpacing: 0.4, textTransform: "uppercase" }}>
               {item.label}
             </Text>
             <Text style={{ ...MONEY, color: colors.textMuted, fontSize: type.small, fontWeight: "600" }}>{formatPaise(item.dayTotalPaise)}</Text>
@@ -134,7 +134,7 @@ export function HistoryScreen() {
   const header = (
     <View style={{ paddingTop: insets.top + spacing.md, paddingHorizontal: spacing.lg, paddingBottom: spacing.sm, backgroundColor: colors.background }}>
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.md }}>
-        <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.headline, fontWeight: "800", letterSpacing: -0.6 }}>
+        <Text accessibilityRole="header" style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.headline, fontWeight: "800", letterSpacing: -0.6 }}>
           History
         </Text>
         <Pressable
@@ -156,7 +156,7 @@ export function HistoryScreen() {
           })}
         >
           <Ionicons name="options-outline" size={20} color={filterCount ? colors.onPrimarySoft : colors.text} />
-          {filterCount ? <Text style={{ color: colors.onPrimarySoft, fontWeight: "700", marginLeft: spacing.xs, fontSize: type.small }}>{filterCount}</Text> : null}
+          {filterCount ? <Text style={{ fontFamily: FONT_FAMILY, color: colors.onPrimarySoft, fontWeight: "700", marginLeft: spacing.xs, fontSize: type.small }}>{filterCount}</Text> : null}
         </Pressable>
       </View>
       <View style={{ flexDirection: "row", alignItems: "center", height: 48, borderRadius: 14, backgroundColor: colors.surfaceAlt, paddingHorizontal: spacing.md }}>
@@ -167,7 +167,7 @@ export function HistoryScreen() {
           onChangeText={setSearchText}
           placeholder="Search description, merchant, notes"
           placeholderTextColor={colors.textFaint}
-          style={{ flex: 1, marginLeft: spacing.sm, color: colors.text, fontSize: type.body }}
+          style={{ fontFamily: FONT_FAMILY, flex: 1, marginLeft: spacing.sm, color: colors.text, fontSize: type.body }}
           returnKeyType="search"
         />
         {searchText ? (
@@ -179,10 +179,10 @@ export function HistoryScreen() {
       {rows && summary && totalEver ? (
         <View style={{ flexDirection: "row", alignItems: "center", marginTop: spacing.md, paddingHorizontal: spacing.xs }}>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "600" }}>
+            <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.body, fontWeight: "600" }}>
               {rows.length} {rows.length === 1 ? "expense" : "expenses"} · <Text style={MONEY}>{formatPaise(summary.totalPaise)}</Text>
             </Text>
-            <Text style={{ color: colors.textMuted, fontSize: type.caption, marginTop: 2 }}>
+            <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.caption, marginTop: 2 }}>
               {SORT_LABELS[filters.sort]}
               {summary.refundedCount ? ` · ${summary.refundedCount} refunded not counted` : ""}
             </Text>
@@ -194,7 +194,7 @@ export function HistoryScreen() {
               hitSlop={10}
               style={{ paddingHorizontal: spacing.md, minHeight: 32, justifyContent: "center", borderRadius: radii.pill, backgroundColor: colors.primarySoft }}
             >
-              <Text style={{ color: colors.onPrimarySoft, fontWeight: "600", fontSize: type.small }}>Clear filters</Text>
+              <Text style={{ fontFamily: FONT_FAMILY, color: colors.onPrimarySoft, fontWeight: "600", fontSize: type.small }}>Clear filters</Text>
             </Pressable>
           ) : null}
         </View>

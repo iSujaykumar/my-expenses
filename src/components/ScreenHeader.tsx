@@ -4,6 +4,7 @@ import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useTheme } from "../theme/useTheme";
+import { FONT_FAMILY } from "../theme/tokens";
 
 /** Top bar for pushed screens: round back button and a centred-left title, blending into the page. */
 export function ScreenHeader({ title, onBack, right }: { title: string; onBack: () => void; right?: ReactNode }) {
@@ -33,7 +34,7 @@ export function ScreenHeader({ title, onBack, right }: { title: string; onBack: 
         <Text
           accessibilityRole="header"
           numberOfLines={1}
-          style={{ color: colors.text, fontSize: type.title, fontWeight: "700", marginLeft: spacing.md, flex: 1, letterSpacing: -0.3 }}
+          style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.title, fontWeight: "700", marginLeft: spacing.md, flex: 1, letterSpacing: -0.3 }}
         >
           {title}
         </Text>

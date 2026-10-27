@@ -12,7 +12,7 @@ import { SegmentedControl } from "../../src/components/SegmentedControl";
 import { AppSettings, SETTING_OPTIONS, SettingKey } from "../../src/repo/settings";
 import { useAppSettings } from "../../src/state/AppSettings";
 import { MAX_CONTENT_WIDTH } from "../../src/theme/motion";
-import { categoryPalette } from "../../src/theme/tokens";
+import { categoryPalette, FONT_FAMILY } from "../../src/theme/tokens";
 import { useTheme } from "../../src/theme/useTheme";
 import { formatDisplayDate, todayLocal } from "../../src/utils/date";
 
@@ -34,7 +34,7 @@ export default function SettingsScreen() {
     <View style={{ marginBottom: last ? 0 : spacing.lg }}>
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: spacing.sm }}>
         <IconTile icon={icon} color={tint} size={32} />
-        <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "600", marginLeft: spacing.md }}>{title}</Text>
+        <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.body, fontWeight: "600", marginLeft: spacing.md }}>{title}</Text>
       </View>
       <SegmentedControl
         accessibilityLabel={title}
@@ -50,7 +50,7 @@ export default function SettingsScreen() {
   const privacyPoint = (icon: "phone-portrait-outline" | "lock-open-outline" | "trash-outline" | "share-outline", text: string) => (
     <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: spacing.md }}>
       <Ionicons name={icon} size={18} color={colors.primary} style={{ marginRight: spacing.md, marginTop: 1 }} />
-      <Text style={{ color: colors.text, fontSize: type.small, lineHeight: 19, flex: 1 }}>{text}</Text>
+      <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.small, lineHeight: 19, flex: 1 }}>{text}</Text>
     </View>
   );
 
@@ -59,7 +59,7 @@ export default function SettingsScreen() {
       style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{ paddingTop: insets.top + spacing.md, paddingHorizontal: spacing.lg, paddingBottom: 112, width: "100%", maxWidth: MAX_CONTENT_WIDTH, alignSelf: "center" }}
     >
-      <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.headline, fontWeight: "800", letterSpacing: -0.6 }}>
+      <Text accessibilityRole="header" style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.headline, fontWeight: "800", letterSpacing: -0.6 }}>
         Settings
       </Text>
 
@@ -89,8 +89,8 @@ export default function SettingsScreen() {
         <View style={{ flexDirection: "row", alignItems: "center", marginBottom: spacing.lg }}>
           <IconTile icon="shield-checkmark-outline" color={colors.primary} size={40} />
           <View style={{ flex: 1, marginLeft: spacing.md }}>
-            <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "700" }}>Private by design</Text>
-            <Text style={{ color: colors.textMuted, fontSize: type.small }}>Offline, no account, no tracking</Text>
+            <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.body, fontWeight: "700" }}>Private by design</Text>
+            <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small }}>Offline, no account, no tracking</Text>
           </View>
         </View>
         {privacyPoint("phone-portrait-outline", "Your data stays on this phone. Meow has no account, no ads, no analytics and never connects to the internet.")}
@@ -98,7 +98,7 @@ export default function SettingsScreen() {
         {privacyPoint("trash-outline", "Uninstalling Meow or using \"Clear storage\" in Android settings deletes all your expenses permanently, unless you exported a backup first.")}
         {privacyPoint("share-outline", "Exported files (CSV or backup) are not encrypted either. They go wherever you send them from the share menu; keep them somewhere safe.")}
       </Card>
-      <Text style={{ color: colors.textFaint, fontSize: type.small, marginTop: spacing.lg, textAlign: "center" }}>Meow version {Constants.expoConfig?.version ?? "unknown"}</Text>
+      <Text style={{ fontFamily: FONT_FAMILY, color: colors.textFaint, fontSize: type.small, marginTop: spacing.lg, textAlign: "center" }}>Meow version {Constants.expoConfig?.version ?? "unknown"}</Text>
     </ScrollView>
   );
 }

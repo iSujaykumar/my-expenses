@@ -3,6 +3,7 @@ import { ComponentProps } from "react";
 import { Pressable, Text, View } from "react-native";
 
 import { useTheme } from "../theme/useTheme";
+import { FONT_FAMILY } from "../theme/tokens";
 
 export function EmptyState(props: {
   icon: ComponentProps<typeof Ionicons>["name"];
@@ -21,8 +22,8 @@ export function EmptyState(props: {
       >
         <Ionicons name={props.icon} size={32} color={colors.onPrimarySoft} />
       </View>
-      <Text style={{ color: colors.text, fontSize: type.title, fontWeight: "700", marginTop: spacing.lg, textAlign: "center", letterSpacing: -0.3 }}>{props.title}</Text>
-      <Text style={{ color: colors.textMuted, fontSize: type.body, lineHeight: 22, marginTop: spacing.sm, textAlign: "center", maxWidth: 320 }}>{props.message}</Text>
+      <Text style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.title, fontWeight: "700", marginTop: spacing.lg, textAlign: "center", letterSpacing: -0.3 }}>{props.title}</Text>
+      <Text style={{ fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.body, lineHeight: 22, marginTop: spacing.sm, textAlign: "center", maxWidth: 320 }}>{props.message}</Text>
       {props.actionLabel && props.onAction ? (
         <Pressable
           accessibilityRole="button"
@@ -37,7 +38,7 @@ export function EmptyState(props: {
             justifyContent: "center",
           })}
         >
-          <Text style={{ color: colors.onPrimary, fontWeight: "700", fontSize: type.body }}>{props.actionLabel}</Text>
+          <Text style={{ fontFamily: FONT_FAMILY, color: colors.onPrimary, fontWeight: "700", fontSize: type.body }}>{props.actionLabel}</Text>
         </Pressable>
       ) : null}
     </View>

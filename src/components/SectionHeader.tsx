@@ -1,6 +1,7 @@
 import { Pressable, StyleProp, Text, View, ViewStyle } from "react-native";
 
 import { useTheme } from "../theme/useTheme";
+import { FONT_FAMILY } from "../theme/tokens";
 
 /**
  * Title above a group of content. "section" is a bold sentence-case heading;
@@ -34,8 +35,8 @@ export function SectionHeader({
         accessibilityRole="header"
         style={
           group
-            ? { color: colors.textMuted, fontSize: type.small, fontWeight: "600", letterSpacing: 0.4, textTransform: "uppercase" }
-            : { color: colors.text, fontSize: type.bodyLarge, fontWeight: "700", letterSpacing: -0.2 }
+            ? { fontFamily: FONT_FAMILY, color: colors.textMuted, fontSize: type.small, fontWeight: "600", letterSpacing: 0.4, textTransform: "uppercase" }
+            : { fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.bodyLarge, fontWeight: "700", letterSpacing: -0.2 }
         }
       >
         {title}
@@ -48,7 +49,7 @@ export function SectionHeader({
           onPress={onAction}
           style={{ minHeight: 32, justifyContent: "center" }}
         >
-          <Text style={{ color: colors.primary, fontSize: type.small, fontWeight: "600" }}>{actionLabel}</Text>
+          <Text style={{ fontFamily: FONT_FAMILY, color: colors.primary, fontSize: type.small, fontWeight: "600" }}>{actionLabel}</Text>
         </Pressable>
       ) : null}
     </View>

@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 
 import { BudgetLevel } from "../repo/budgets";
-import { categoryColor, MONEY } from "../theme/tokens";
+import { categoryColor, FONT_FAMILY, MONEY } from "../theme/tokens";
 import { useTheme } from "../theme/useTheme";
 import { formatPaise } from "../utils/money";
 
@@ -28,7 +28,7 @@ export function BudgetBar(props: { title: string; color?: string | null; spentPa
       <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: spacing.xs }}>
         <View style={{ flexDirection: "row", alignItems: "center", flexShrink: 1 }}>
           {dot ? <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: dot, marginRight: spacing.sm }} /> : null}
-          <Text numberOfLines={1} style={{ color: colors.text, fontSize: type.body, fontWeight: "600" }}>{props.title}</Text>
+          <Text numberOfLines={1} style={{ fontFamily: FONT_FAMILY, color: colors.text, fontSize: type.body, fontWeight: "600" }}>{props.title}</Text>
         </View>
         <Text style={{ ...MONEY, color: colors.textMuted, fontSize: type.small, fontWeight: "500" }}>{props.percentUsed}% used</Text>
       </View>
