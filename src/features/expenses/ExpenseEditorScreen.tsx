@@ -11,6 +11,7 @@ import { Transaction } from "../../repo/transactions";
 import { notifyDataChanged } from "../../state/dataEvents";
 import { useTheme } from "../../theme/useTheme";
 import { todayLocal } from "../../utils/date";
+import { hapticWarning } from "../../utils/haptics";
 import { ExpenseForm } from "./ExpenseForm";
 import { emptyFormValues, ExpenseFormValues, formValuesFromTransaction, isFormDirty, ValidatedExpense } from "./form";
 
@@ -112,6 +113,7 @@ export function ExpenseEditorScreen({ id }: { id?: string }) {
             const full = await repos.transactions.getById(record.id);
             if (!full) return leave();
             await repos.transactions.delete(record.id);
+            hapticWarning();
             notifyDataChanged();
             leave();
             showSnackbar({

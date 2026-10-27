@@ -1,36 +1,16 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 
+import { TabBar } from "../../src/components/TabBar";
 import { useTheme } from "../../src/theme/useTheme";
 
 export default function TabsLayout() {
   const { colors } = useTheme();
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textMuted,
-        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
-        sceneStyle: { backgroundColor: colors.background },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{ title: "Home", tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" color={color} size={size} /> }}
-      />
-      <Tabs.Screen
-        name="history"
-        options={{ title: "History", tabBarIcon: ({ color, size }) => <Ionicons name="list-outline" color={color} size={size} /> }}
-      />
-      <Tabs.Screen
-        name="reports"
-        options={{ title: "Reports", tabBarIcon: ({ color, size }) => <Ionicons name="bar-chart-outline" color={color} size={size} /> }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{ title: "Settings", tabBarIcon: ({ color, size }) => <Ionicons name="settings-outline" color={color} size={size} /> }}
-      />
+    <Tabs tabBar={(props) => <TabBar {...props} />} screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.background } }}>
+      <Tabs.Screen name="index" options={{ title: "Home" }} />
+      <Tabs.Screen name="history" options={{ title: "History" }} />
+      <Tabs.Screen name="reports" options={{ title: "Reports" }} />
+      <Tabs.Screen name="settings" options={{ title: "Settings" }} />
     </Tabs>
   );
 }
