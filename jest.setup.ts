@@ -25,3 +25,22 @@ jest.mock("react-native-gifted-charts", () => ({ PieChart: () => null, BarChart:
 
 // Native SQLite is never opened in unit tests (they use better-sqlite3); stub it so screens can be imported.
 jest.mock("expo-sqlite", () => ({ openDatabaseAsync: jest.fn() }));
+
+// Haptics are fire-and-forget feedback; record calls so tests can check they happen on save/delete/record.
+jest.mock("expo-haptics", () => ({
+  notificationAsync: jest.fn(() => Promise.resolve()),
+  impactAsync: jest.fn(() => Promise.resolve()),
+  NotificationFeedbackType: { Success: "success", Warning: "warning", Error: "error" },
+  ImpactFeedbackStyle: { Light: "light", Medium: "medium", Heavy: "heavy" },
+}));
+
+// Decorative SVG (progress ring) and gradients render as plain views in Node.
+jest.mock("react-native-svg", () => {
+  const { View } = require("react-native");
+  const Stub = (props: { children?: unknown }) => require("react").createElement(View, null, props.children);
+  return { __esModule: true, default: Stub, Svg: Stub, Circle: Stub, Defs: Stub, LinearGradient: Stub, Stop: Stub, Rect: Stub, Path: Stub };
+});
+jest.mock("expo-linear-gradient", () => {
+  const { View } = require("react-native");
+  return { LinearGradient: View };
+});

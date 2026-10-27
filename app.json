@@ -24,7 +24,8 @@
             "backgroundColor": "#10241F"
           }
         }
-      ]
+      ],
+      "expo-font"
     ],
     "android": {
       "package": "com.isujaykumar.meow",
