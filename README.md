@@ -4,15 +4,16 @@ Meow is a private, offline personal expense tracker for Android, built with
 React Native + Expo (SDK 57) + TypeScript + Expo Router. No login, no cloud,
 no ads, no analytics. Your data stays on your phone.
 
-**Status: Phase 6 (version 1.1.0), feature complete.** Add, edit and delete expenses (with Undo);
+**Status: version 1.2.0 (redesigned UI), feature complete.** Add, edit and delete expenses (with Undo);
 History with search, filters and sorting; monthly dashboard; Reports; categories; budgets;
 recurring expenses with "Due soon"; CSV export; full JSON backup and restore; theme, date
 format and week-start settings; optional sample data.
 
 - App name: **Meow**
 - Android package ID: `com.isujaykumar.meow` (never change it, or Android treats it as a different app)
-- Version: 1.1.0 (versionCode 5)
+- Version: 1.2.0 (versionCode 6)
 - Currency: INR (Rs)
+- Look: 1.2.0 is a visual redesign (calm fintech style, light and dark, Inter font with tabular numbers for money, custom tab bar with a centred Add button). Data, features and the database are unchanged.
 
 ---
 
