@@ -1,8 +1,13 @@
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { ComponentProps, useState } from "react";
+import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Button, ButtonVariant } from "../../components/Button";
+import { Card } from "../../components/Card";
+import { IconTile } from "../../components/IconTile";
+import { SegmentedControl } from "../../components/SegmentedControl";
 import { ScreenHeader } from "../../components/ScreenHeader";
 import { useSnackbar } from "../../components/Snackbar";
 import { BackupData, InvalidRecord, parseAndValidateBackup } from "../../data/backup";
@@ -11,6 +16,7 @@ import { pickTextFile } from "../../data/files";
 import { applyImport, ImportMode, ImportPlan, planImport } from "../../data/importBackup";
 import { useRepositories } from "../../db/DatabaseProvider";
 import { notifyDataChanged } from "../../state/dataEvents";
+import { categoryPalette } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { DEDUPE_EXPLANATION, ImportPreview } from "./ImportPreview";
 
@@ -128,76 +134,82 @@ export function BackupScreen() {
     );
   };
 
-  const card = (title: string, body: string, children: React.ReactNode) => (
-    <View style={{ backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.lg, padding: spacing.lg, marginBottom: spacing.md }}>
-      <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.bodyLarge, fontWeight: "700" }}>{title}</Text>
-      <Text style={{ color: colors.textMuted, fontSize: type.small, marginTop: spacing.xs, marginBottom: spacing.md }}>{body}</Text>
+  const card = (title: string, body: string, icon: string, tint: string, children: React.ReactNode) => (
+    <Card style={{ marginBottom: spacing.md }}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <IconTile icon={icon} color={tint} size={40} />
+        <Text accessibilityRole="header" style={{ flex: 1, color: colors.text, fontSize: type.bodyLarge, fontWeight: "700", marginLeft: spacing.md }}>
+          {title}
+        </Text>
+      </View>
+      <Text style={{ color: colors.textMuted, fontSize: type.small, lineHeight: 19, marginTop: spacing.md, marginBottom: spacing.sm }}>{body}</Text>
       {children}
-    </View>
+    </Card>
   );
-  const button = (label: string, onPress: () => void, variant: "primary" | "outline" | "danger" = "primary", disabled = false) => (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ disabled: disabled || !!busy }}
-      disabled={disabled || !!busy}
-      onPress={onPress}
-      style={{
-        height: 48,
-        borderRadius: radii.md,
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: spacing.sm,
-        backgroundColor: variant === "primary" ? colors.primary : colors.surface,
-        borderWidth: variant === "primary" ? 0 : 1,
-        borderColor: variant === "danger" ? colors.danger : colors.primary,
-        opacity: disabled || busy ? 0.5 : 1,
-      }}
-    >
-      <Text style={{ color: variant === "primary" ? colors.onPrimary : variant === "danger" ? colors.danger : colors.primary, fontWeight: "700" }}>{label}</Text>
-    </Pressable>
-  );
+  const button = (label: string, onPress: () => void, variant: "primary" | "outline" | "danger" = "primary", disabled = false, icon?: ComponentProps<typeof Ionicons>["name"]) => {
+    const v: ButtonVariant = variant === "outline" ? "secondary" : variant;
+    return <Button label={label} icon={icon} variant={v} onPress={onPress} disabled={disabled || !!busy} style={{ marginTop: spacing.sm }} />;
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ScreenHeader title="Backup & export" onBack={() => router.back()} />
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}>
         {busy ? (
-          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: spacing.md }}>
-            <ActivityIndicator color={colors.primary} />
-            <Text style={{ color: colors.textMuted, marginLeft: spacing.sm }}>{busy}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: spacing.md, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.primarySoft }}>
+            <ActivityIndicator color={colors.onPrimarySoft} />
+            <Text style={{ color: colors.onPrimarySoft, marginLeft: spacing.sm, fontWeight: "600" }}>{busy}</Text>
           </View>
         ) : null}
-        {card("Export expenses (CSV)", "A spreadsheet file of every expense: date, amount in rupees and paise, category, merchant, payment method, status and notes. Good for Excel or Google Sheets. It cannot be imported back; use a backup for that.", button("Export CSV", doExportCsv))}
-        {card("Full backup (JSON)", "Everything: expenses, categories, merchants, budgets and settings. Use it to restore on this or a new phone. You choose where to save it from the share menu; the app never uploads anything.", button("Export backup", doExportBackup))}
+        {card(
+          "Export expenses (CSV)",
+          "A spreadsheet file of every expense: date, amount in rupees and paise, category, merchant, payment method, status and notes. Good for Excel or Google Sheets. It cannot be imported back; use a backup for that.",
+          "document-text-outline",
+          categoryPalette[2],
+          button("Export CSV", doExportCsv, "primary", false, "share-outline"),
+        )}
+        {card(
+          "Full backup (JSON)",
+          "Everything: expenses, categories, merchants, budgets and settings. Use it to restore on this or a new phone. You choose where to save it from the share menu; the app never uploads anything.",
+          "cloud-download-outline",
+          categoryPalette[1],
+          button("Export backup", doExportBackup, "primary", false, "download-outline"),
+        )}
         {card(
           "Restore from backup",
           "Pick a Meow backup file. It is fully checked before anything is changed, and you'll see a preview first.",
+          "refresh-outline",
+          categoryPalette[4],
           <>
-            {button(loaded ? "Pick a different file" : "Choose backup file", pick, loaded ? "outline" : "primary")}
-            {fileError ? <Text style={{ color: colors.danger, marginTop: spacing.md }}>{fileError}</Text> : null}
+            {button(loaded ? "Pick a different file" : "Choose backup file", pick, loaded ? "outline" : "primary", false, "folder-open-outline")}
+            {fileError ? (
+              <View style={{ flexDirection: "row", alignItems: "flex-start", marginTop: spacing.md, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.dangerSurface }}>
+                <Ionicons name="alert-circle" size={18} color={colors.danger} style={{ marginRight: spacing.sm }} />
+                <Text style={{ flex: 1, color: colors.danger, fontWeight: "600" }}>{fileError}</Text>
+              </View>
+            ) : null}
             {loaded ? (
               <View style={{ marginTop: spacing.lg }}>
-                <Text style={{ color: colors.text, fontSize: type.small }}>
-                  {loaded.fileName} · made {loaded.exportedAt.slice(0, 10)} · app {loaded.appVersion}
-                </Text>
-                <View style={{ flexDirection: "row", marginVertical: spacing.md }}>
-                  {(["merge", "replace"] as const).map((m) => (
-                    <Pressable
-                      key={m}
-                      accessibilityRole="radio"
-                      accessibilityState={{ selected: loaded.plan.mode === m }}
-                      onPress={() => void setMode(m)}
-                      style={{ flex: 1, height: 44, alignItems: "center", justifyContent: "center", borderRadius: radii.md, borderWidth: 1.5, borderColor: loaded.plan.mode === m ? colors.primary : colors.border, backgroundColor: loaded.plan.mode === m ? colors.surfaceAlt : colors.surface, marginRight: m === "merge" ? spacing.sm : 0 }}
-                    >
-                      <Text style={{ color: colors.text, fontWeight: "700" }}>{m === "merge" ? "Merge (add new)" : "Replace everything"}</Text>
-                    </Pressable>
-                  ))}
+                <View style={{ flexDirection: "row", alignItems: "center", marginBottom: spacing.md }}>
+                  <Ionicons name="document-attach-outline" size={16} color={colors.textMuted} style={{ marginRight: spacing.xs }} />
+                  <Text style={{ flex: 1, color: colors.text, fontSize: type.small }}>
+                    {loaded.fileName} · made {loaded.exportedAt.slice(0, 10)} · app {loaded.appVersion}
+                  </Text>
                 </View>
-                <Text style={{ color: colors.textMuted, fontSize: type.caption, marginBottom: spacing.md }}>
+                <SegmentedControl
+                  accessibilityLabel="Import mode"
+                  value={loaded.plan.mode}
+                  onChange={(m) => void setMode(m)}
+                  segments={[
+                    { value: "merge", label: "Merge (add new)" },
+                    { value: "replace", label: "Replace everything" },
+                  ]}
+                />
+                <Text style={{ color: colors.textMuted, fontSize: type.caption, lineHeight: 17, marginVertical: spacing.md }}>
                   {loaded.plan.mode === "merge" ? DEDUPE_EXPLANATION : "Replace deletes everything on this phone and restores the backup exactly. It happens in one step: if anything fails, nothing changes."}
                 </Text>
                 <ImportPreview plan={loaded.plan} />
-                {button(loaded.plan.mode === "merge" ? "Merge now" : "Replace all data", confirm, loaded.plan.mode === "merge" ? "primary" : "danger", !!loaded.plan.blockedReason)}
+                {button(loaded.plan.mode === "merge" ? "Merge now" : "Replace all data", confirm, loaded.plan.mode === "merge" ? "primary" : "danger", !!loaded.plan.blockedReason, loaded.plan.mode === "merge" ? "git-merge-outline" : "swap-horizontal-outline")}
                 {button("Cancel", () => setLoaded(null), "outline")}
               </View>
             ) : null}

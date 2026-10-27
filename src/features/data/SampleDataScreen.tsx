@@ -1,9 +1,12 @@
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Button } from "../../components/Button";
+import { Card } from "../../components/Card";
 import { ScreenHeader } from "../../components/ScreenHeader";
 import { useSnackbar } from "../../components/Snackbar";
 import { STARTER_CATEGORIES } from "../../constants/categories";
@@ -11,6 +14,7 @@ import { existingSampleIds, loadSampleData, removeSampleData, SAMPLE_ITEMS, samp
 import { useRepositories } from "../../db/DatabaseProvider";
 import { useFormatDate } from "../../state/AppSettings";
 import { notifyDataChanged, useDataVersion } from "../../state/dataEvents";
+import { MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { parseDateString, toDateString, todayLocal } from "../../utils/date";
 import { formatPaise } from "../../utils/money";
@@ -104,57 +108,66 @@ export function SampleDataScreen() {
       },
     ]);
 
-  const button = (label: string, onPress: () => void, variant: "primary" | "outline" | "danger", disabled = false) => (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ disabled: disabled || busy }}
-      disabled={disabled || busy}
-      onPress={onPress}
-      style={{ minHeight: 48, borderRadius: radii.md, alignItems: "center", justifyContent: "center", marginTop: spacing.sm, paddingHorizontal: spacing.md, backgroundColor: variant === "primary" ? colors.primary : colors.surface, borderWidth: variant === "primary" ? 0 : 1, borderColor: variant === "danger" ? colors.danger : colors.primary, opacity: disabled || busy ? 0.5 : 1 }}
-    >
-      <Text style={{ color: variant === "primary" ? colors.onPrimary : variant === "danger" ? colors.danger : colors.primary, fontWeight: "700", textAlign: "center" }}>{label}</Text>
-    </Pressable>
+  const button = (label: string, onPress: () => void, variant: "primary" | "outline" | "danger", disabled = false, icon?: React.ComponentProps<typeof Ionicons>["name"]) => (
+    <Button label={label} icon={icon} variant={variant === "outline" ? "secondary" : variant} onPress={onPress} disabled={disabled || busy} style={{ marginTop: spacing.sm }} />
   );
+  const items = SAMPLE_ITEMS.filter((i) => !loaded.has(sampleId(i.key)));
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ScreenHeader title="Sample expenses" onBack={() => router.back()} />
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}>
-        <Text style={{ color: colors.text, fontSize: type.body }}>
+        <Text style={{ color: colors.textMuted, fontSize: type.small, lineHeight: 19, paddingHorizontal: spacing.xs }}>
           Your own list of past purchases. Nothing is added until you tap &quot;Add&quot; and confirm. The real dates are unknown, so every date starts as today: set one date for all, or tap a date to change it. You can also edit each expense afterwards.
         </Text>
         {loaded.size > 0 ? (
-          <View style={{ marginTop: spacing.md }}>
+          <Card style={{ marginTop: spacing.lg }}>
             <Text style={{ color: colors.textMuted }}>{loaded.size} sample expenses are already in the app.</Text>
-            {button(`Remove ${loaded.size} sample expenses`, remove, "danger")}
-          </View>
+            {button(`Remove ${loaded.size} sample expenses`, remove, "danger", false, "trash-outline")}
+          </Card>
         ) : null}
         {count === 0 ? (
-          <Text style={{ color: colors.textMuted, marginTop: spacing.lg }}>All sample expenses are already added.</Text>
+          <Text style={{ color: colors.textMuted, marginTop: spacing.lg, textAlign: "center" }}>All sample expenses are already added.</Text>
         ) : (
           <>
-            <View accessible style={{ marginTop: spacing.lg, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}>
-              <Text style={{ color: colors.text, fontWeight: "700", fontSize: type.bodyLarge }}>{count} expenses · {formatPaise(total)}</Text>
-              <Text style={{ color: colors.textMuted, fontSize: type.small }}>Count and total are worked out from the list below.</Text>
-              {flagged ? <Text style={{ color: colors.warning, fontSize: type.small, marginTop: 2 }}>{flagged} items are flagged ⚑ as uncertain. Check them after adding.</Text> : null}
+            <View accessible style={{ marginTop: spacing.lg, padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.primarySoft }}>
+              <Text style={{ ...MONEY, color: colors.onPrimarySoft, fontWeight: "800", fontSize: type.title }}>
+                {count} expenses · {formatPaise(total)}
+              </Text>
+              <Text style={{ color: colors.onPrimarySoft, fontSize: type.small, marginTop: 2, opacity: 0.85 }}>Count and total are worked out from the list below.</Text>
+              {flagged ? <Text style={{ color: colors.warning, fontSize: type.small, marginTop: spacing.xs, fontWeight: "600" }}>{flagged} items are flagged ⚑ as uncertain. Check them after adding.</Text> : null}
             </View>
-            {button("Set one date for all…", setAll, "outline")}
-            {SAMPLE_ITEMS.filter((i) => !loaded.has(sampleId(i.key))).map((i) => (
-              <View key={i.key} style={{ paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.border }}>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
-                  <Text style={{ color: colors.text, fontWeight: "600", flexShrink: 1 }}>{i.flag ? "⚑ " : ""}{i.description}</Text>
-                  <Text style={{ color: colors.text, fontWeight: "700" }}>{formatPaise(i.rupees * 100)}</Text>
+            {button("Set one date for all…", setAll, "outline", false, "calendar-outline")}
+            <Card padded={false} style={{ marginTop: spacing.md }}>
+              {items.map((i, idx) => (
+                <View key={i.key} style={{ paddingVertical: spacing.sm, paddingHorizontal: spacing.lg, borderTopWidth: idx === 0 ? 0 : StyleSheet.hairlineWidth, borderTopColor: colors.divider }}>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", paddingTop: spacing.xs }}>
+                    <Text style={{ color: colors.text, fontWeight: "600", flexShrink: 1 }}>
+                      {i.flag ? "⚑ " : ""}
+                      {i.description}
+                    </Text>
+                    <Text style={{ ...MONEY, color: colors.text, fontWeight: "700" }}>{formatPaise(i.rupees * 100)}</Text>
+                  </View>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
+                    <Text style={{ color: colors.textMuted, fontSize: type.small }}>
+                      {categoryName(i.categoryId)}
+                      {i.merchant ? ` · ${i.merchant}` : ""}
+                    </Text>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={`Date for ${i.description} ${formatPaise(i.rupees * 100)}: ${formatDate(dates[i.key])}. Change`}
+                      onPress={() => openDatePicker(dates[i.key], (d) => setDates((s) => ({ ...s, [i.key]: d })))}
+                      style={{ minHeight: 44, flexDirection: "row", alignItems: "center" }}
+                    >
+                      <Ionicons name="calendar-outline" size={14} color={colors.primary} style={{ marginRight: 4 }} />
+                      <Text style={{ color: colors.primary, fontWeight: "600", fontSize: type.small }}>{formatDate(dates[i.key])}</Text>
+                    </Pressable>
+                  </View>
+                  {i.flag ? <Text style={{ color: colors.warning, fontSize: type.caption, paddingBottom: spacing.xs }}>{i.flag}</Text> : null}
                 </View>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
-                  <Text style={{ color: colors.textMuted, fontSize: type.small }}>{categoryName(i.categoryId)}{i.merchant ? ` · ${i.merchant}` : ""}</Text>
-                  <Pressable accessibilityRole="button" accessibilityLabel={`Date for ${i.description} ${formatPaise(i.rupees * 100)}: ${formatDate(dates[i.key])}. Change`} onPress={() => openDatePicker(dates[i.key], (d) => setDates((s) => ({ ...s, [i.key]: d })))} style={{ minHeight: 44, justifyContent: "center" }}>
-                    <Text style={{ color: colors.primary, fontWeight: "600" }}>{formatDate(dates[i.key])} ✎</Text>
-                  </Pressable>
-                </View>
-                {i.flag ? <Text style={{ color: colors.warning, fontSize: type.caption }}>{i.flag}</Text> : null}
-              </View>
-            ))}
-            {button(`Add ${count} sample expenses`, load, "primary")}
+              ))}
+            </Card>
+            {button(`Add ${count} sample expenses`, load, "primary", false, "add-circle-outline")}
           </>
         )}
       </ScrollView>

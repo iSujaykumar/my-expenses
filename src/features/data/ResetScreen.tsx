@@ -1,8 +1,12 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, KeyboardAvoidingView, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Alert, KeyboardAvoidingView, ScrollView, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Button } from "../../components/Button";
+import { Card } from "../../components/Card";
+import { useInputStyle } from "../../components/inputStyle";
 import { ScreenHeader } from "../../components/ScreenHeader";
 import { useSnackbar } from "../../components/Snackbar";
 import { exportBackup } from "../../data/exporters";
@@ -21,6 +25,8 @@ export function ResetScreen() {
   const insets = useSafeAreaInsets();
   const showSnackbar = useSnackbar();
   const { colors, spacing, radii, type } = useTheme();
+  const [focused, setFocused] = useState(false);
+  const inputStyle = useInputStyle({ focused });
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const ok = isResetConfirmed(text);
@@ -45,39 +51,44 @@ export function ResetScreen() {
       <ScreenHeader title="Reset all data" onBack={() => router.back()} />
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}>
-          <Text style={{ color: colors.text, fontSize: type.body }}>
-            This permanently deletes every expense, merchant, budget, custom category and setting on this phone. The starter categories come back. It cannot be undone.
-          </Text>
-          <Pressable
-            accessibilityRole="button"
+          <View style={{ flexDirection: "row", alignItems: "flex-start", padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.dangerSurface, marginBottom: spacing.lg }}>
+            <Ionicons name="warning" size={22} color={colors.danger} style={{ marginRight: spacing.md, marginTop: 1 }} />
+            <Text style={{ flex: 1, color: colors.text, fontSize: type.body, lineHeight: 22 }}>
+              This permanently deletes every expense, merchant, budget, custom category and setting on this phone. The starter categories come back. It cannot be undone.
+            </Text>
+          </View>
+          <Button
+            variant="secondary"
+            icon="cloud-download-outline"
+            label="Export a backup first"
             disabled={busy}
             onPress={() => exportBackup(repos).catch(() => Alert.alert("Backup failed", "Could not create the backup file."))}
-            style={{ height: 48, borderRadius: radii.md, borderWidth: 1, borderColor: colors.primary, alignItems: "center", justifyContent: "center", marginTop: spacing.lg }}
-          >
-            <Text style={{ color: colors.primary, fontWeight: "700" }}>Export a backup first</Text>
-          </Pressable>
-          <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "700", marginTop: spacing.xl }}>Type {RESET_CONFIRM_WORD} to confirm</Text>
-          <TextInput
-            testID="reset-input"
-            accessibilityLabel={`Type ${RESET_CONFIRM_WORD} to confirm`}
-            value={text}
-            onChangeText={setText}
-            autoCapitalize="characters"
-            autoCorrect={false}
-            placeholder={RESET_CONFIRM_WORD}
-            placeholderTextColor={colors.textMuted}
-            style={{ marginTop: spacing.sm, minHeight: 48, borderWidth: 1, borderColor: colors.border, borderRadius: radii.md, paddingHorizontal: spacing.md, color: colors.text, backgroundColor: colors.surface, fontSize: type.body }}
           />
-          <Pressable
-            testID="reset-button"
-            accessibilityRole="button"
-            accessibilityState={{ disabled: !ok || busy }}
-            disabled={!ok || busy}
-            onPress={reset}
-            style={{ height: 52, borderRadius: radii.md, backgroundColor: colors.danger, alignItems: "center", justifyContent: "center", marginTop: spacing.lg, opacity: ok && !busy ? 1 : 0.4 }}
-          >
-            <Text style={{ color: colors.onDanger, fontWeight: "700", fontSize: type.bodyLarge }}>{busy ? "Deleting…" : "Delete all data"}</Text>
-          </Pressable>
+          <Card style={{ marginTop: spacing.lg }}>
+            <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "700" }}>Type {RESET_CONFIRM_WORD} to confirm</Text>
+            <TextInput
+              testID="reset-input"
+              accessibilityLabel={`Type ${RESET_CONFIRM_WORD} to confirm`}
+              value={text}
+              onChangeText={setText}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              autoCapitalize="characters"
+              autoCorrect={false}
+              placeholder={RESET_CONFIRM_WORD}
+              placeholderTextColor={colors.textFaint}
+              style={[inputStyle, { marginTop: spacing.sm, letterSpacing: 2, fontWeight: "700" }]}
+            />
+            <Button
+              testID="reset-button"
+              variant="danger"
+              icon="trash-outline"
+              label={busy ? "Deleting…" : "Delete all data"}
+              disabled={!ok || busy}
+              onPress={reset}
+              style={{ marginTop: spacing.lg }}
+            />
+          </Card>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
