@@ -1,8 +1,11 @@
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { ComponentProps, useEffect, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Button } from "../../components/Button";
+import { Card } from "../../components/Card";
 import { CategoryIcon } from "../../components/CategoryIcon";
 import { EmptyState } from "../../components/EmptyState";
 import { ScreenHeader } from "../../components/ScreenHeader";
@@ -11,6 +14,7 @@ import { useRepositories } from "../../db/DatabaseProvider";
 import { RecurringTemplate } from "../../repo/recurring";
 import { useFormatDate } from "../../state/AppSettings";
 import { notifyDataChanged, useDataVersion } from "../../state/dataEvents";
+import { MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { formatPaise } from "../../utils/money";
 
@@ -64,9 +68,16 @@ export function RecurringListScreen() {
       },
     ]);
 
-  const smallButton = (label: string, onPress: () => void, color = colors.primary, a11y?: string) => (
-    <Pressable accessibilityRole="button" accessibilityLabel={a11y ?? label} onPress={onPress} hitSlop={6} style={{ minHeight: 44, justifyContent: "center", paddingHorizontal: spacing.sm }}>
-      <Text style={{ color, fontWeight: "700" }}>{label}</Text>
+  const smallButton = (label: string, icon: ComponentProps<typeof Ionicons>["name"], onPress: () => void, color = colors.primary, a11y?: string) => (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={a11y ?? label}
+      onPress={onPress}
+      hitSlop={6}
+      style={({ pressed }) => ({ minHeight: 44, flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", borderRadius: radii.md, backgroundColor: pressed ? colors.surfaceAlt : "transparent" })}
+    >
+      <Ionicons name={icon} size={16} color={color} style={{ marginRight: spacing.xs }} />
+      <Text style={{ color, fontWeight: "600", fontSize: type.small }}>{label}</Text>
     </Pressable>
   );
 
@@ -74,34 +85,31 @@ export function RecurringListScreen() {
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ScreenHeader title="Recurring expenses" onBack={() => router.back()} />
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}>
-        <Text style={{ color: colors.textMuted, fontSize: type.small, marginBottom: spacing.md }}>
+        <Text style={{ color: colors.textMuted, fontSize: type.small, lineHeight: 19, marginBottom: spacing.lg, paddingHorizontal: spacing.xs }}>
           Templates for things you pay every week or month (rent, gym, phone). When one is due, it appears in &quot;Due soon&quot; on Home and you tap Record. Meow does not send notifications and never records anything by itself.
         </Text>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.push({ pathname: "/recurring/[id]", params: { id: "new" } })}
-          style={{ height: 48, borderRadius: radii.md, backgroundColor: colors.primary, alignItems: "center", justifyContent: "center", marginBottom: spacing.lg }}
-        >
-          <Text style={{ color: colors.onPrimary, fontWeight: "700" }}>Add recurring expense</Text>
-        </Pressable>
+        <Button icon="add" label="Add recurring expense" onPress={() => router.push({ pathname: "/recurring/[id]", params: { id: "new" } })} style={{ marginBottom: spacing.lg }} />
         {items && items.length === 0 ? <EmptyState icon="repeat-outline" title="No recurring expenses" message="Add one for bills you pay regularly." /> : null}
         {items?.map((t) => (
-          <View key={t.id} style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radii.lg, padding: spacing.md, marginBottom: spacing.sm, opacity: t.isPaused ? 0.7 : 1 }}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <CategoryIcon icon={t.categoryIcon} color={t.categoryColor} />
+          <Card key={t.id} padded={false} style={{ marginBottom: spacing.md, opacity: t.isPaused ? 0.72 : 1 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", padding: spacing.lg }}>
+              <CategoryIcon icon={t.categoryIcon} color={t.categoryColor} size={42} />
               <View style={{ flex: 1, marginLeft: spacing.md }}>
-                <Text style={{ color: colors.text, fontWeight: "700" }}>{t.description}{t.isPaused ? " (paused)" : ""}</Text>
-                <Text style={{ color: colors.textMuted, fontSize: type.small }}>{describeSchedule(t, formatDate)}</Text>
+                <Text style={{ color: colors.text, fontWeight: "700", fontSize: type.body }}>
+                  {t.description}
+                  {t.isPaused ? " (paused)" : ""}
+                </Text>
+                <Text style={{ color: colors.textMuted, fontSize: type.small, marginTop: 2 }}>{describeSchedule(t, formatDate)}</Text>
                 <Text style={{ color: colors.textMuted, fontSize: type.small }}>{t.categoryName}</Text>
               </View>
-              <Text style={{ color: colors.text, fontWeight: "700" }}>{formatPaise(t.amountPaise)}</Text>
+              <Text style={{ ...MONEY, color: colors.text, fontWeight: "700", fontSize: type.body, marginLeft: spacing.sm }}>{formatPaise(t.amountPaise)}</Text>
             </View>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "flex-end" }}>
-              {smallButton("Edit", () => router.push({ pathname: "/recurring/[id]", params: { id: t.id } }), colors.primary, `Edit ${t.description}`)}
-              {smallButton(t.isPaused ? "Resume" : "Pause", () => void togglePause(t), colors.primary, `${t.isPaused ? "Resume" : "Pause"} ${t.description}`)}
-              {smallButton("Delete", () => remove(t), colors.danger, `Delete ${t.description}`)}
+            <View style={{ flexDirection: "row", borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.divider, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs }}>
+              {smallButton("Edit", "create-outline", () => router.push({ pathname: "/recurring/[id]", params: { id: t.id } }), colors.primary, `Edit ${t.description}`)}
+              {smallButton(t.isPaused ? "Resume" : "Pause", t.isPaused ? "play-outline" : "pause-outline", () => void togglePause(t), colors.primary, `${t.isPaused ? "Resume" : "Pause"} ${t.description}`)}
+              {smallButton("Delete", "trash-outline", () => remove(t), colors.danger, `Delete ${t.description}`)}
             </View>
-          </View>
+          </Card>
         ))}
       </ScrollView>
     </View>

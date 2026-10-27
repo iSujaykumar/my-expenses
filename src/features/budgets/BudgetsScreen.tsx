@@ -1,8 +1,10 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Alert, KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Button } from "../../components/Button";
+import { SectionHeader } from "../../components/SectionHeader";
 import { CategoryPickerModal } from "../../components/CategoryPickerModal";
 import { ScreenHeader } from "../../components/ScreenHeader";
 import { useSnackbar } from "../../components/Snackbar";
@@ -19,7 +21,7 @@ export function BudgetsScreen() {
   const insets = useSafeAreaInsets();
   const showSnackbar = useSnackbar();
   const dataVersion = useDataVersion();
-  const { colors, spacing, radii, type } = useTheme();
+  const { colors, spacing, type } = useTheme();
   const [budgets, setBudgets] = useState<Budget[] | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [newCategory, setNewCategory] = useState<Category | null>(null);
@@ -70,7 +72,7 @@ export function BudgetsScreen() {
       ) : (
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}>
-            <Text style={{ color: colors.textMuted, fontSize: type.body, marginBottom: spacing.lg }}>
+            <Text style={{ color: colors.textMuted, fontSize: type.small, lineHeight: 19, marginBottom: spacing.lg, paddingHorizontal: spacing.xs }}>
               Monthly limits are optional. Paid and pending expenses count; refunded ones don&apos;t. You&apos;ll see a gentle warning at 80% and a clear note at 100%.
             </Text>
             <BudgetEditorRow
@@ -87,9 +89,9 @@ export function BudgetsScreen() {
               onRemove={overall ? () => remove(overall, "overall") : undefined}
             />
 
-            <Text style={{ color: colors.text, fontSize: type.bodyLarge, fontWeight: "700", marginTop: spacing.lg, marginBottom: spacing.sm }}>Category budgets</Text>
+            <SectionHeader title="Category budgets" variant="group" style={{ marginTop: spacing.lg }} />
             {perCategory.length === 0 && !newCategory ? (
-              <Text style={{ color: colors.textMuted, marginBottom: spacing.md }}>None yet.</Text>
+              <Text style={{ color: colors.textMuted, marginBottom: spacing.md, paddingHorizontal: spacing.xs }}>None yet.</Text>
             ) : null}
             {perCategory.map((b) => {
               const c = b.categoryId ? catById.get(b.categoryId) : undefined;
@@ -99,6 +101,7 @@ export function BudgetsScreen() {
                   key={`${b.id}-${b.updatedAt}`}
                   title={title}
                   color={c?.color}
+                  icon={c?.icon}
                   amountPaise={b.monthlyAmountPaise}
                   enabled={b.enabled}
                   onSave={async (paise) => {
@@ -118,6 +121,7 @@ export function BudgetsScreen() {
                 key={`new-${newCategory.id}`}
                 title={newCategory.name}
                 color={newCategory.color}
+                icon={newCategory.icon}
                 amountPaise={null}
                 enabled
                 onSave={async (paise) => {
@@ -129,13 +133,7 @@ export function BudgetsScreen() {
               />
             ) : null}
             {available.length > 0 && !newCategory ? (
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => setPicking(true)}
-                style={{ height: 48, borderRadius: radii.md, borderWidth: 1, borderColor: colors.primary, alignItems: "center", justifyContent: "center" }}
-              >
-                <Text style={{ color: colors.primary, fontWeight: "700" }}>Add a category budget</Text>
-              </Pressable>
+              <Button variant="secondary" icon="add" label="Add a category budget" onPress={() => setPicking(true)} />
             ) : null}
           </ScrollView>
         </KeyboardAvoidingView>

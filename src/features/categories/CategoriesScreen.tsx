@@ -1,10 +1,12 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CategoryIcon } from "../../components/CategoryIcon";
-import { ListRow } from "../../components/ListRow";
+import { Button } from "../../components/Button";
+import { ListGroup, ListRow } from "../../components/ListRow";
+import { SectionHeader } from "../../components/SectionHeader";
 import { ScreenHeader } from "../../components/ScreenHeader";
 import { useRepositories } from "../../db/DatabaseProvider";
 import { Category } from "../../repo/categories";
@@ -15,7 +17,7 @@ export function CategoriesScreen() {
   const repos = useRepositories();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { colors, spacing, radii, type } = useTheme();
+  const { colors, spacing, elevation } = useTheme();
   const dataVersion = useDataVersion();
   const [rows, setRows] = useState<{ category: Category; count: number }[] | null>(null);
 
@@ -35,8 +37,9 @@ export function CategoriesScreen() {
 
   const section = (title: string, list: { category: Category; count: number }[]) =>
     list.length ? (
-      <View style={{ marginBottom: spacing.lg }}>
-        <Text style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "700", paddingHorizontal: spacing.lg, marginBottom: spacing.xs }}>{title}</Text>
+      <View style={{ marginBottom: spacing.xl }}>
+        <SectionHeader title={title} variant="group" />
+        <ListGroup>
         {list.map(({ category: c, count }) => (
           <ListRow
             key={c.id}
@@ -46,6 +49,7 @@ export function CategoriesScreen() {
             onPress={() => router.push({ pathname: "/category/[id]", params: { id: c.id } })}
           />
         ))}
+        </ListGroup>
       </View>
     ) : null;
 
@@ -55,18 +59,14 @@ export function CategoriesScreen() {
       {!rows ? (
         <ActivityIndicator style={{ marginTop: spacing.xxl }} size="large" color={colors.primary} />
       ) : (
-        <ScrollView contentContainerStyle={{ paddingTop: spacing.md, paddingBottom: 96 + insets.bottom }}>
-          {section("ACTIVE", rows.filter((r) => !r.category.isArchived))}
-          {section("ARCHIVED (hidden when adding expenses, kept in history)", rows.filter((r) => r.category.isArchived))}
+        <ScrollView contentContainerStyle={{ paddingTop: spacing.md, paddingHorizontal: spacing.lg, paddingBottom: 112 + insets.bottom }}>
+          {section("Active", rows.filter((r) => !r.category.isArchived))}
+          {section("Archived · hidden when adding, kept in history", rows.filter((r) => r.category.isArchived))}
         </ScrollView>
       )}
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => router.push("/category/new")}
-        style={{ position: "absolute", right: spacing.lg, bottom: spacing.lg + insets.bottom, height: 56, paddingHorizontal: spacing.xl, borderRadius: radii.pill, backgroundColor: colors.primary, justifyContent: "center", elevation: 4 }}
-      >
-        <Text style={{ color: colors.onPrimary, fontWeight: "700", fontSize: type.bodyLarge }}>New category</Text>
-      </Pressable>
+      <View style={[{ position: "absolute", right: spacing.lg, bottom: spacing.lg + insets.bottom, borderRadius: 16 }, elevation]}>
+        <Button icon="add" label="New category" onPress={() => router.push("/category/new")} />
+      </View>
     </View>
   );
 }

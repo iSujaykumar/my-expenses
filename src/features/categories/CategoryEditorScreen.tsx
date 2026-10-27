@@ -1,8 +1,11 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Pressable, ScrollView, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { ActivityIndicator, Alert, KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Button } from "../../components/Button";
+import { Card } from "../../components/Card";
 import { CategoryPickerModal } from "../../components/CategoryPickerModal";
 import { EmptyState } from "../../components/EmptyState";
 import { ScreenHeader } from "../../components/ScreenHeader";
@@ -141,14 +144,8 @@ export function CategoryEditorScreen({ id }: { id?: string }) {
     );
   };
 
-  const button = (label: string, onPress: () => void, danger = false) => (
-    <Pressable
-      accessibilityRole="button"
-      onPress={onPress}
-      style={{ height: 48, borderRadius: radii.md, borderWidth: 1, borderColor: danger ? colors.danger : colors.border, alignItems: "center", justifyContent: "center", marginTop: spacing.sm, backgroundColor: colors.surface }}
-    >
-      <Text style={{ color: danger ? colors.danger : colors.text, fontWeight: "700" }}>{label}</Text>
-    </Pressable>
+  const button = (label: string, onPress: () => void, danger = false, icon?: "swap-horizontal-outline" | "archive-outline" | "trash-outline") => (
+    <Button label={label} onPress={onPress} variant={danger ? "danger" : "secondary"} icon={icon} style={{ marginTop: spacing.sm }} />
   );
 
   return (
@@ -162,9 +159,10 @@ export function CategoryEditorScreen({ id }: { id?: string }) {
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}>
             {category?.isArchived ? (
-              <Text style={{ color: colors.warning, backgroundColor: colors.warningSurface, padding: spacing.md, borderRadius: radii.md, marginBottom: spacing.lg }}>
-                This category is archived. It is hidden when adding expenses but kept in history.
-              </Text>
+              <View style={{ flexDirection: "row", alignItems: "flex-start", backgroundColor: colors.warningSurface, padding: spacing.md, borderRadius: radii.md, marginBottom: spacing.lg }}>
+                <Ionicons name="archive-outline" size={18} color={colors.warning} style={{ marginRight: spacing.sm, marginTop: 1 }} />
+                <Text style={{ color: colors.warning, flex: 1, fontSize: type.body }}>This category is archived. It is hidden when adding expenses but kept in history.</Text>
+              </View>
             ) : null}
             <CategoryForm
               key={category?.id ?? "new"}
@@ -173,14 +171,14 @@ export function CategoryEditorScreen({ id }: { id?: string }) {
               onSubmit={save}
             />
             {category ? (
-              <View style={{ marginTop: spacing.xl }}>
-                <Text style={{ color: colors.textMuted, fontSize: type.small, marginBottom: spacing.xs }}>
+              <Card style={{ marginTop: spacing.xl }}>
+                <Text style={{ color: colors.textMuted, fontSize: type.small, marginBottom: spacing.sm }}>
                   {count} {count === 1 ? "expense uses" : "expenses use"} this category. Renaming or recolouring keeps all of them.
                 </Text>
-                {count > 0 ? button("Move expenses to another category", () => setMoveMode("move")) : null}
-                {button(category.isArchived ? "Unarchive" : "Archive", askArchive)}
-                {button("Delete category", askDelete, true)}
-              </View>
+                {count > 0 ? button("Move expenses to another category", () => setMoveMode("move"), false, "swap-horizontal-outline") : null}
+                {button(category.isArchived ? "Unarchive" : "Archive", askArchive, false, "archive-outline")}
+                {button("Delete category", askDelete, true, "trash-outline")}
+              </Card>
             ) : null}
           </ScrollView>
         </KeyboardAvoidingView>
