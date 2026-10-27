@@ -1,15 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
-import { ComponentProps } from "react";
-import { View } from "react-native";
+import { categoryColor } from "../theme/tokens";
+import { IconTile } from "./IconTile";
 
-type IconName = ComponentProps<typeof Ionicons>["name"];
-
-/** Category icon in a tinted circle, using the category's own colour everywhere. */
+/** Category icon in a tinted rounded tile, using the category's (display-mapped) colour everywhere. */
 export function CategoryIcon({ icon, color, size = 40 }: { icon: string; color: string; size?: number }) {
-  const name: IconName = icon in Ionicons.glyphMap ? (icon as IconName) : "pricetag-outline";
-  return (
-    <View style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: `${color}22`, alignItems: "center", justifyContent: "center" }}>
-      <Ionicons name={name} size={size * 0.5} color={color} />
-    </View>
-  );
+  return <IconTile icon={icon} color={categoryColor(color)} size={size} />;
 }

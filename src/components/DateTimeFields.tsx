@@ -20,16 +20,14 @@ export function dateToString(d: Date): string {
 }
 
 function useFieldStyle() {
-  const { colors, spacing, radii } = useTheme();
+  const { colors, spacing } = useTheme();
   return {
-    minHeight: 48,
+    minHeight: 52,
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    paddingHorizontal: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.md,
-    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.lg - 2,
+    borderRadius: 14,
+    backgroundColor: colors.surfaceAlt,
   };
 }
 
@@ -56,11 +54,11 @@ export function DateField({ value, onChange }: { value: string; onChange: (date:
   return (
     <View>
       <Pressable accessibilityRole="button" accessibilityLabel={`Date, ${isValidDateString(value) ? formatDate(value) : "not set"}. Change`} onPress={open} style={fieldStyle}>
-        <Ionicons name="calendar-outline" size={20} color={colors.textMuted} />
+        <Ionicons name="calendar-outline" size={20} color={colors.primary} />
         <Text style={{ color: colors.text, fontSize: type.body, marginLeft: spacing.sm, flex: 1 }}>
           {isValidDateString(value) ? formatDate(value) : "Pick a date"}
         </Text>
-        <Text style={{ color: colors.primary, fontWeight: "700" }}>Change</Text>
+        <Text style={{ color: colors.primary, fontWeight: "600", fontSize: type.small }}>Change</Text>
       </Pressable>
       <View style={{ flexDirection: "row", marginTop: spacing.sm }}>
         <Chip label="Today" selected={value === today} onPress={() => onChange(today)} />
@@ -94,9 +92,9 @@ export function TimeField({ value, onChange }: { value: string; onChange: (time:
     <View>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <Pressable accessibilityRole="button" accessibilityLabel={value ? `Time ${value}. Change` : "Add time"} onPress={open} style={[fieldStyle, { flex: 1 }]}>
-          <Ionicons name="time-outline" size={20} color={colors.textMuted} />
+          <Ionicons name="time-outline" size={20} color={colors.primary} />
           <Text style={{ color: value ? colors.text : colors.textMuted, fontSize: type.body, marginLeft: spacing.sm, flex: 1 }}>{value || "No time (optional)"}</Text>
-          <Text style={{ color: colors.primary, fontWeight: "700" }}>{value ? "Change" : "Add"}</Text>
+          <Text style={{ color: colors.primary, fontWeight: "600", fontSize: type.small }}>{value ? "Change" : "Add"}</Text>
         </Pressable>
         {value ? (
           <Pressable accessibilityRole="button" accessibilityLabel="Clear time" hitSlop={8} onPress={() => onChange("")} style={{ padding: spacing.md }}>

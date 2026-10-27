@@ -1,25 +1,71 @@
 import { Ionicons } from "@expo/vector-icons";
-import { ReactNode } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Children, Fragment, ReactNode } from "react";
+import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 import { useTheme } from "../theme/useTheme";
+import { Card } from "./Card";
+import { IconTile } from "./IconTile";
 
-/** Tappable settings-style row with a chevron. */
-export function ListRow({ title, subtitle, left, onPress }: { title: string; subtitle?: string; left?: ReactNode; onPress: () => void }) {
+/** Tappable settings-style row: optional icon tile, title, subtitle, chevron. */
+export function ListRow({
+  title,
+  subtitle,
+  left,
+  icon,
+  iconColor,
+  destructive,
+  value,
+  onPress,
+}: {
+  title: string;
+  subtitle?: string;
+  left?: ReactNode;
+  icon?: string;
+  iconColor?: string;
+  destructive?: boolean;
+  value?: string;
+  onPress: () => void;
+}) {
   const { colors, spacing, type } = useTheme();
+  const tint = destructive ? colors.danger : (iconColor ?? colors.primary);
+  const leading = left ?? (icon ? <IconTile icon={icon} color={tint} size={36} /> : null);
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={subtitle ? `${title}, ${subtitle}` : title}
       onPress={onPress}
-      style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", minHeight: 56, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, backgroundColor: pressed ? colors.surfaceAlt : colors.surface })}
+      style={({ pressed }) => ({
+        flexDirection: "row",
+        alignItems: "center",
+        minHeight: 60,
+        paddingHorizontal: spacing.lg,
+        paddingVertical: spacing.md,
+        backgroundColor: pressed ? colors.surfaceAlt : "transparent",
+      })}
     >
-      {left ? <View style={{ marginRight: spacing.md }}>{left}</View> : null}
+      {leading ? <View style={{ marginRight: spacing.md }}>{leading}</View> : null}
       <View style={{ flex: 1 }}>
-        <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "600" }}>{title}</Text>
+        <Text style={{ color: destructive ? colors.danger : colors.text, fontSize: type.body, fontWeight: "600" }}>{title}</Text>
         {subtitle ? <Text style={{ color: colors.textMuted, fontSize: type.small, marginTop: 2 }}>{subtitle}</Text> : null}
       </View>
-      <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+      {value ? <Text style={{ color: colors.textMuted, fontSize: type.small, marginRight: spacing.xs }}>{value}</Text> : null}
+      <Ionicons name="chevron-forward" size={18} color={colors.textFaint} />
     </Pressable>
+  );
+}
+
+/** A card holding rows, with inset hairline dividers between them. */
+export function ListGroup({ children, style, inset = 64 }: { children: ReactNode; style?: StyleProp<ViewStyle>; inset?: number }) {
+  const { colors } = useTheme();
+  const items = Children.toArray(children).filter(Boolean);
+  return (
+    <Card padded={false} style={[{ overflow: "hidden" }, style]}>
+      {items.map((child, i) => (
+        <Fragment key={i}>
+          {i > 0 ? <View style={{ height: StyleSheet.hairlineWidth, backgroundColor: colors.border, marginLeft: inset }} /> : null}
+          {child}
+        </Fragment>
+      ))}
+    </Card>
   );
 }

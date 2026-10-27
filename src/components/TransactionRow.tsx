@@ -3,6 +3,7 @@ import { Pressable, Text, View } from "react-native";
 
 import { PAYMENT_METHOD_LABELS } from "../constants/categories";
 import { TransactionWithDetails } from "../repo/transactions";
+import { MONEY } from "../theme/tokens";
 import { useTheme } from "../theme/useTheme";
 import { formatPaise } from "../utils/money";
 import { CategoryIcon } from "./CategoryIcon";
@@ -31,11 +32,12 @@ export const TransactionRow = memo(function TransactionRow({
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: spacing.lg,
-        paddingVertical: spacing.md,
+        paddingVertical: spacing.md - 2,
+        minHeight: 64,
         backgroundColor: pressed ? colors.surfaceAlt : colors.surface,
       })}
     >
-      <CategoryIcon icon={t.categoryIcon} color={t.categoryColor} />
+      <CategoryIcon icon={t.categoryIcon} color={t.categoryColor} size={42} />
       <View style={{ flex: 1, marginLeft: spacing.md }}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Text numberOfLines={1} style={{ color: colors.text, fontSize: type.body, fontWeight: "600", flexShrink: 1 }}>
@@ -49,9 +51,10 @@ export const TransactionRow = memo(function TransactionRow({
       </View>
       <Text
         style={{
+          ...MONEY,
           color: refunded ? colors.textMuted : colors.text,
           fontSize: type.body,
-          fontWeight: "700",
+          fontWeight: "600",
           marginLeft: spacing.sm,
           textDecorationLine: refunded ? "line-through" : "none",
         }}

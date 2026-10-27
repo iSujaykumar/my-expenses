@@ -14,16 +14,15 @@ export interface SnackbarOptions {
 }
 
 /** Approximate heights of what sits at the bottom of each kind of screen. */
-const TAB_BAR_HEIGHT = 56;
-const FAB_SPACE = 56 + 16;
-const FOOTER_BAR_HEIGHT = 76;
+const TAB_BAR_SPACE = 64 + 12; // custom tab bar plus the raised Add button
+const FOOTER_BAR_HEIGHT = 84;
 
 /**
  * Bottom offset that keeps the snackbar above the system navigation bar (safe-area inset)
- * plus the tab bar and FAB on tab screens, or the Save/footer bar on full-screen pages.
+ * plus the tab bar (with its raised Add button) on tab screens, or the Save/footer bar on full-screen pages.
  */
 export function snackbarBottomOffset(insetBottom: number, onTabScreen: boolean, gap = 8): number {
-  return insetBottom + gap + (onTabScreen ? TAB_BAR_HEIGHT + FAB_SPACE : FOOTER_BAR_HEIGHT);
+  return insetBottom + gap + (onTabScreen ? TAB_BAR_SPACE : FOOTER_BAR_HEIGHT);
 }
 
 const SnackbarContext = createContext<(options: SnackbarOptions) => void>(() => {});
@@ -68,7 +67,7 @@ export function SnackbarProvider({ children }: { children: ReactNode }) {
           accessibilityLiveRegion="polite"
           style={[
             styles.bar,
-            { bottom: snackbarBottomOffset(insets.bottom, onTabScreen), backgroundColor: colors.snackbar, borderRadius: radii.md, padding: spacing.md, marginHorizontal: spacing.lg },
+            { bottom: snackbarBottomOffset(insets.bottom, onTabScreen), backgroundColor: colors.snackbar, borderRadius: radii.md + 2, paddingVertical: spacing.md, paddingHorizontal: spacing.lg, marginHorizontal: spacing.lg },
           ]}
         >
           <Text style={{ color: colors.onSnackbar, fontSize: type.body, flex: 1 }}>{current.message}</Text>
@@ -83,7 +82,7 @@ export function SnackbarProvider({ children }: { children: ReactNode }) {
               }}
               style={{ paddingHorizontal: spacing.sm }}
             >
-              <Text style={{ color: colors.snackbarAction, fontWeight: "700", fontSize: type.body }}>{current.actionLabel}</Text>
+              <Text style={{ color: colors.snackbarAction, fontWeight: "700", fontSize: type.body, letterSpacing: 0.2 }}>{current.actionLabel}</Text>
             </Pressable>
           ) : null}
         </View>

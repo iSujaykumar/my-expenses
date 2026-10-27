@@ -2,9 +2,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { ComponentProps, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 
+import { Button } from "../../components/Button";
 import { FormField } from "../../components/FormField";
+import { IconTile, withAlpha } from "../../components/IconTile";
+import { useInputStyle } from "../../components/inputStyle";
 import { ValidationError } from "../../db/types";
-import { categoryIcons, categoryPalette } from "../../theme/tokens";
+import { categoryColor, categoryIcons, categoryPalette } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 
 export interface CategoryFormValues {
@@ -26,6 +29,8 @@ export function CategoryForm(props: { initial: CategoryFormValues; submitLabel: 
   const [values, setValues] = useState(props.initial);
   const [errors, setErrors] = useState<{ name?: string; color?: string; general?: string }>({});
   const [saving, setSaving] = useState(false);
+  const inputStyle = useInputStyle({ invalid: !!errors.name });
+  const shownColor = categoryColor(values.color);
 
   const submit = async () => {
     const nameError = validateCategoryName(values.name);
@@ -47,6 +52,12 @@ export function CategoryForm(props: { initial: CategoryFormValues; submitLabel: 
 
   return (
     <View>
+      <View style={{ alignItems: "center", marginBottom: spacing.xl }} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+        <IconTile icon={values.icon} color={shownColor} size={64} />
+        <Text numberOfLines={1} style={{ color: values.name.trim() ? colors.text : colors.textMuted, fontSize: type.bodyLarge, fontWeight: "600", marginTop: spacing.sm }}>
+          {values.name.trim() || "New category"}
+        </Text>
+      </View>
       {errors.general ? <Text style={{ color: colors.danger, marginBottom: spacing.md }}>{errors.general}</Text> : null}
       <FormField label="Name" required error={errors.name}>
         <TextInput
@@ -59,8 +70,8 @@ export function CategoryForm(props: { initial: CategoryFormValues; submitLabel: 
           }}
           maxLength={40}
           placeholder="e.g. Coffee"
-          placeholderTextColor={colors.textMuted}
-          style={{ minHeight: 48, borderWidth: 1, borderColor: errors.name ? colors.danger : colors.border, borderRadius: radii.md, paddingHorizontal: spacing.md, color: colors.text, backgroundColor: colors.surface, fontSize: type.body }}
+          placeholderTextColor={colors.textFaint}
+          style={inputStyle}
         />
       </FormField>
       <FormField label="Colour" error={errors.color}>
@@ -70,11 +81,13 @@ export function CategoryForm(props: { initial: CategoryFormValues; submitLabel: 
               key={c}
               accessibilityRole="radio"
               accessibilityLabel={`Colour ${c}`}
-              accessibilityState={{ selected: values.color === c }}
+              accessibilityState={{ selected: shownColor === c }}
               onPress={() => setValues((v) => ({ ...v, color: c }))}
-              style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: c, margin: spacing.xs, alignItems: "center", justifyContent: "center", borderWidth: values.color === c ? 3 : 0, borderColor: colors.text }}
+              style={{ width: 44, height: 44, borderRadius: 22, margin: spacing.xs, alignItems: "center", justifyContent: "center", borderWidth: 2.5, borderColor: shownColor === c ? colors.text : "transparent" }}
             >
-              {values.color === c ? <Ionicons name="checkmark" size={20} color="#FFFFFF" /> : null}
+              <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: c, alignItems: "center", justifyContent: "center" }}>
+                {shownColor === c ? <Ionicons name="checkmark" size={18} color="#FFFFFF" /> : null}
+              </View>
             </Pressable>
           ))}
         </View>
@@ -88,22 +101,14 @@ export function CategoryForm(props: { initial: CategoryFormValues; submitLabel: 
               accessibilityLabel={`Icon ${icon.replace(/-outline$/, "").replace(/-/g, " ")}`}
               accessibilityState={{ selected: values.icon === icon }}
               onPress={() => setValues((v) => ({ ...v, icon }))}
-              style={{ width: 44, height: 44, margin: spacing.xs, borderRadius: radii.md, alignItems: "center", justifyContent: "center", borderWidth: 1.5, borderColor: values.icon === icon ? values.color : colors.border, backgroundColor: values.icon === icon ? `${values.color}22` : colors.surface }}
+              style={{ width: 48, height: 48, margin: spacing.xs, borderRadius: radii.md + 2, alignItems: "center", justifyContent: "center", borderWidth: 1.5, borderColor: values.icon === icon ? shownColor : "transparent", backgroundColor: values.icon === icon ? withAlpha(shownColor, 0.14) : colors.surfaceAlt }}
             >
-              <Ionicons name={icon as ComponentProps<typeof Ionicons>["name"]} size={22} color={values.icon === icon ? values.color : colors.textMuted} />
+              <Ionicons name={icon as ComponentProps<typeof Ionicons>["name"]} size={22} color={values.icon === icon ? shownColor : colors.textMuted} />
             </Pressable>
           ))}
         </View>
       </FormField>
-      <Pressable
-        testID="category-save"
-        accessibilityRole="button"
-        disabled={saving}
-        onPress={submit}
-        style={{ height: 52, borderRadius: radii.md, backgroundColor: colors.primary, alignItems: "center", justifyContent: "center", opacity: saving ? 0.6 : 1 }}
-      >
-        <Text style={{ color: colors.onPrimary, fontWeight: "700", fontSize: type.bodyLarge }}>{saving ? "Saving…" : props.submitLabel}</Text>
-      </Pressable>
+      <Button testID="category-save" label={saving ? "Saving…" : props.submitLabel} accessibilityLabel={props.submitLabel} disabled={saving} onPress={submit} style={{ marginTop: spacing.sm }} />
     </View>
   );
 }

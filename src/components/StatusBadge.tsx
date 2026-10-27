@@ -12,13 +12,13 @@ export function StatusBadge({ status }: { status: TransactionStatus }) {
     <View
       style={{
         backgroundColor: pending ? colors.warningSurface : colors.surfaceAlt,
-        borderRadius: radii.sm,
-        paddingHorizontal: spacing.xs + 2,
-        paddingVertical: 1,
-        marginLeft: spacing.xs,
+        borderRadius: radii.pill,
+        paddingHorizontal: spacing.sm,
+        paddingVertical: 2,
+        marginLeft: spacing.xs + 2,
       }}
     >
-      <Text style={{ fontSize: type.caption, fontWeight: "700", color: pending ? colors.warning : colors.textMuted }}>
+      <Text style={{ fontSize: type.caption - 1, fontWeight: "600", color: pending ? colors.warning : colors.textMuted }}>
         {pending ? "Pending" : "Refunded"}
       </Text>
     </View>

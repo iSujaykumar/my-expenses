@@ -17,7 +17,7 @@ export function CategoryPickerModal(props: { visible: boolean; title: string; me
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: spacing.lg }}>
           <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.title, fontWeight: "700", flex: 1 }}>{props.title}</Text>
           <Pressable accessibilityRole="button" onPress={props.onClose} hitSlop={12}>
-            <Text style={{ color: colors.primary, fontWeight: "700", fontSize: type.body }}>Cancel</Text>
+            <Text style={{ color: colors.primary, fontWeight: "600", fontSize: type.body }}>Cancel</Text>
           </Pressable>
         </View>
         {props.message ? <Text style={{ color: colors.textMuted, fontSize: type.body, paddingHorizontal: spacing.lg, marginBottom: spacing.sm }}>{props.message}</Text> : null}
@@ -33,8 +33,8 @@ export function CategoryPickerModal(props: { visible: boolean; title: string; me
                 onPress={() => props.onPick(c)}
                 style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.lg, paddingVertical: spacing.md, backgroundColor: pressed ? colors.surfaceAlt : colors.background })}
               >
-                <CategoryIcon icon={c.icon} color={c.color} size={36} />
-                <Text style={{ color: colors.text, fontSize: type.body, marginLeft: spacing.md }}>{c.name}</Text>
+                <CategoryIcon icon={c.icon} color={c.color} size={40} />
+                <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "500", marginLeft: spacing.md }}>{c.name}</Text>
               </Pressable>
             ))
           )}

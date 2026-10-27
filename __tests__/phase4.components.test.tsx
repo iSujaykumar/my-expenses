@@ -68,9 +68,9 @@ describe("CategoryForm", () => {
     const onSubmit = jest.fn().mockResolvedValue(undefined);
     await render(<CategoryForm initial={initial} submitLabel="Create category" onSubmit={onSubmit} />);
     await fireEvent.changeText(screen.getByTestId("category-name-input"), "  Coffee ");
-    await fireEvent.press(screen.getByLabelText("Colour #1565C0"));
+    await fireEvent.press(screen.getByLabelText("Colour #3B7DD8"));
     await fireEvent.press(screen.getByTestId("category-save"));
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledWith({ name: "Coffee", color: "#1565C0", icon: "cart-outline" }));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledWith({ name: "Coffee", color: "#3B7DD8", icon: "cart-outline" }));
   });
 });
 
@@ -89,8 +89,8 @@ describe("BudgetEditorRow", () => {
 
 describe("snackbar position", () => {
   it("uses safe-area insets instead of a fixed offset", () => {
-    expect(snackbarBottomOffset(0, false)).toBe(84);
-    expect(snackbarBottomOffset(24, false)).toBe(108);
-    expect(snackbarBottomOffset(24, true)).toBe(24 + 8 + 56 + 72);
+    expect(snackbarBottomOffset(0, false)).toBe(92);
+    expect(snackbarBottomOffset(24, false)).toBe(116);
+    expect(snackbarBottomOffset(24, true)).toBe(24 + 8 + 64 + 12);
   });
 });
