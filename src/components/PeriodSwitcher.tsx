@@ -10,25 +10,32 @@ export function PeriodSwitcher({
   onNext,
   previousAccessibilityLabel,
   nextAccessibilityLabel,
+  nextDisabled = false,
 }: {
   label: string;
   onPrevious: () => void;
   onNext: () => void;
   previousAccessibilityLabel: string;
   nextAccessibilityLabel: string;
+  nextDisabled?: boolean;
 }) {
   const { colors, spacing, type, elevation } = useTheme();
-  const arrow = (dir: -1 | 1) => (
+  const arrow = (dir: -1 | 1) => {
+    const disabled = dir > 0 && nextDisabled;
+    return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={dir < 0 ? previousAccessibilityLabel : nextAccessibilityLabel}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
       onPress={dir < 0 ? onPrevious : onNext}
       hitSlop={4}
-      style={({ pressed }) => ({ width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: pressed ? colors.surfaceAlt : "transparent" })}
+      style={({ pressed }) => ({ width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", opacity: disabled ? 0.3 : 1, backgroundColor: pressed ? colors.surfaceAlt : "transparent" })}
     >
       <Ionicons name={dir < 0 ? "chevron-back" : "chevron-forward"} size={20} color={colors.text} />
     </Pressable>
-  );
+    );
+  };
   return (
     <View
       style={[

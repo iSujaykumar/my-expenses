@@ -1,13 +1,18 @@
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import { useCallback, useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { ReactNode, useCallback, useEffect, useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Chip } from "../../components/Chip";
+import { Card } from "../../components/Card";
+import { PeriodSwitcher } from "../../components/PeriodSwitcher";
+import { SegmentedControl } from "../../components/SegmentedControl";
 import { useRepositories } from "../../db/DatabaseProvider";
 import { useAppSettings, useFormatDate } from "../../state/AppSettings";
 import { subscribeDataChanged } from "../../state/dataEvents";
+import { MAX_CONTENT_WIDTH } from "../../theme/motion";
+import { MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import {
   addMonths, compareWithPreviousMonth, DateRange, monthLabel, monthOf, monthRange, parseDateString, toDateString, todayLocal, YearMonth, yearRange,
@@ -122,129 +127,246 @@ export function ReportsScreen() {
     else setYear((v) => v + delta);
   };
 
-  const card = (title: string, children: React.ReactNode, how?: string) => (
-    <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.lg, marginBottom: spacing.md }}>
-      <Text accessibilityRole="header" style={{ color: colors.text, fontWeight: "700", fontSize: type.bodyLarge, marginBottom: spacing.sm }}>{title}</Text>
+  const card = (title: string, children: ReactNode, how?: string) => (
+    <Card style={{ marginBottom: spacing.md }}>
+      <Text accessibilityRole="header" style={{ color: colors.text, fontWeight: "700", fontSize: type.bodyLarge, letterSpacing: -0.2, marginBottom: spacing.md }}>
+        {title}
+      </Text>
       {children}
-      {how ? <Text style={{ color: colors.textMuted, fontSize: type.caption, marginTop: spacing.sm }}>How this is calculated: {how}</Text> : null}
-    </View>
+      {how ? (
+        <View style={{ flexDirection: "row", alignItems: "flex-start", marginTop: spacing.md, paddingTop: spacing.md, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.divider }}>
+          <Ionicons name="information-circle-outline" size={15} color={colors.textFaint} style={{ marginRight: spacing.xs + 2, marginTop: 1 }} />
+          <Text style={{ color: colors.textMuted, fontSize: type.caption, lineHeight: 17, flex: 1 }}>How this is calculated: {how}</Text>
+        </View>
+      ) : null}
+    </Card>
   );
 
   const barList = (rows: { key: string; name: string; totalPaise: number; count: number; percent: number }[]) => {
     const max = Math.max(1, ...rows.map((r) => r.totalPaise));
     return rows.map((r) => (
-      <View key={r.key} accessible accessibilityLabel={`${r.name}: ${formatPaise(r.totalPaise)}, ${r.percent}% of spending, ${r.count} ${r.count === 1 ? "expense" : "expenses"}`} style={{ marginBottom: spacing.sm }}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={{ color: colors.text, flex: 1 }} numberOfLines={1}>{r.name}</Text>
-          <Text style={{ color: colors.text, fontWeight: "600" }}>{formatPaise(r.totalPaise)} · {r.percent}%</Text>
+      <View
+        key={r.key}
+        accessible
+        accessibilityLabel={`${r.name}: ${formatPaise(r.totalPaise)}, ${r.percent}% of spending, ${r.count} ${r.count === 1 ? "expense" : "expenses"}`}
+        style={{ marginBottom: spacing.md }}
+      >
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
+          <Text style={{ color: colors.text, flex: 1, fontSize: type.body, fontWeight: "500" }} numberOfLines={1}>
+            {r.name}
+          </Text>
+          <Text style={{ ...MONEY, color: colors.text, fontWeight: "600", fontSize: type.body }}>{formatPaise(r.totalPaise)}</Text>
+          <Text style={{ ...MONEY, color: colors.textMuted, fontSize: type.small, width: 44, textAlign: "right" }}>{r.percent}%</Text>
         </View>
-        <View style={{ height: 6, backgroundColor: colors.surfaceAlt, borderRadius: 3, marginTop: 4 }}>
-          <View style={{ height: 6, width: `${(r.totalPaise / max) * 100}%`, backgroundColor: colors.primary, borderRadius: 3 }} />
+        <View style={{ height: 8, backgroundColor: colors.surfaceAlt, borderRadius: 4, marginTop: spacing.xs + 2, overflow: "hidden" }}>
+          <View style={{ height: 8, width: `${Math.max(2, (r.totalPaise / max) * 100)}%`, backgroundColor: colors.primary, borderRadius: 4 }} />
         </View>
       </View>
     ));
   };
 
   const trendMax = data ? Math.max(0, ...data.trend.map((p) => p.totalPaise)) : 0;
+  const trendIcon = comparison ? (comparison.differencePaise > 0 ? "trending-up" : comparison.differencePaise < 0 ? "trending-down" : "remove") : "remove";
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ paddingTop: insets.top + spacing.sm, paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl }}>
-      <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.headline, fontWeight: "700", marginBottom: spacing.md }}>Reports</Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginBottom: spacing.md }}>
-        {(["month", "year", "custom"] as const).map((m) => (
-          <Chip key={m} label={m === "month" ? "Month" : m === "year" ? "Year" : "Custom range"} selected={mode === m} onPress={() => { setMode(m); setGranularity(undefined); }} />
-        ))}
-      </View>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      contentContainerStyle={{ paddingTop: insets.top + spacing.md, paddingHorizontal: spacing.lg, paddingBottom: 112, width: "100%", maxWidth: MAX_CONTENT_WIDTH, alignSelf: "center" }}
+    >
+      <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.headline, fontWeight: "800", letterSpacing: -0.6, marginBottom: spacing.md }}>
+        Reports
+      </Text>
+      <SegmentedControl
+        accessibilityLabel="Report period type"
+        value={mode}
+        onChange={(m) => {
+          setMode(m);
+          setGranularity(undefined);
+        }}
+        segments={[
+          { value: "month", label: "Month" },
+          { value: "year", label: "Year" },
+          { value: "custom", label: "Custom range" },
+        ]}
+      />
 
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.md }}>
-        {mode !== "custom" ? (
-          <Pressable accessibilityRole="button" accessibilityLabel="Previous period" onPress={() => step(-1)} hitSlop={12} style={{ padding: spacing.sm }}>
-            <Text style={{ color: colors.primary, fontSize: type.bodyLarge, fontWeight: "700" }}>‹</Text>
-          </Pressable>
-        ) : null}
+      <View style={{ alignItems: "center", marginVertical: spacing.md }}>
         {mode === "custom" ? (
-          <View style={{ flexDirection: "row", flex: 1, gap: spacing.sm }}>
+          <View style={{ flexDirection: "row", alignSelf: "stretch", gap: spacing.sm }}>
             {(["start", "end"] as const).map((w) => (
-              <Pressable key={w} accessibilityRole="button" accessibilityLabel={`${w === "start" ? "From" : "To"} ${formatDate(custom[w])}. Change`} onPress={() => pickDate(w)} style={{ flex: 1, minHeight: 48, justifyContent: "center", borderWidth: 1, borderColor: colors.border, borderRadius: radii.md, paddingHorizontal: spacing.md, backgroundColor: colors.surface }}>
-                <Text style={{ color: colors.textMuted, fontSize: type.caption }}>{w === "start" ? "From" : "To"}</Text>
-                <Text style={{ color: colors.text, fontWeight: "600" }}>{formatDate(custom[w])}</Text>
+              <Pressable
+                key={w}
+                accessibilityRole="button"
+                accessibilityLabel={`${w === "start" ? "From" : "To"} ${formatDate(custom[w])}. Change`}
+                onPress={() => pickDate(w)}
+                style={({ pressed }) => ({
+                  flex: 1,
+                  minHeight: 56,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  borderRadius: 14,
+                  paddingHorizontal: spacing.md,
+                  backgroundColor: pressed ? colors.surfaceAlt : colors.surface,
+                  borderWidth: StyleSheet.hairlineWidth,
+                  borderColor: colors.border,
+                })}
+              >
+                <Ionicons name="calendar-outline" size={18} color={colors.primary} style={{ marginRight: spacing.sm }} />
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: colors.textMuted, fontSize: type.caption }}>{w === "start" ? "From" : "To"}</Text>
+                  <Text style={{ color: colors.text, fontWeight: "600", fontSize: type.body }}>{formatDate(custom[w])}</Text>
+                </View>
               </Pressable>
             ))}
           </View>
         ) : (
-          <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.bodyLarge, fontWeight: "700" }}>{periodTitle}</Text>
+          <PeriodSwitcher
+            label={periodTitle}
+            onPrevious={() => step(-1)}
+            onNext={() => step(1)}
+            nextDisabled={!canNext}
+            previousAccessibilityLabel="Previous period"
+            nextAccessibilityLabel="Next period"
+          />
         )}
-        {mode !== "custom" ? (
-          <Pressable accessibilityRole="button" accessibilityLabel="Next period" accessibilityState={{ disabled: !canNext }} disabled={!canNext} onPress={() => step(1)} hitSlop={12} style={{ padding: spacing.sm, opacity: canNext ? 1 : 0.3 }}>
-            <Text style={{ color: colors.primary, fontSize: type.bodyLarge, fontWeight: "700" }}>›</Text>
-          </Pressable>
-        ) : null}
       </View>
 
-      {error ? <Text style={{ color: colors.danger, marginBottom: spacing.md }}>Could not load this report.</Text> : null}
+      {error ? (
+        <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: colors.dangerSurface, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}>
+          <Ionicons name="alert-circle" size={18} color={colors.danger} style={{ marginRight: spacing.sm }} />
+          <Text style={{ color: colors.danger, fontSize: type.body }}>Could not load this report.</Text>
+        </View>
+      ) : null}
       {data ? (
         <>
           {card(
             "Total spent",
             <>
-              <Text accessibilityLabel={`Total spent ${formatPaise(data.summary.totalPaise)}`} style={{ color: colors.text, fontSize: type.display ?? 32, fontWeight: "700" }}>{formatPaise(data.summary.totalPaise)}</Text>
-              <Text style={{ color: colors.textMuted, marginTop: 2 }}>{data.summary.count} {data.summary.count === 1 ? "expense" : "expenses"} · {data.info.note}</Text>
-              {data.summary.pendingPaise > 0 ? <Text style={{ color: colors.textMuted, fontSize: type.small }}>Includes {formatPaise(data.summary.pendingPaise)} pending</Text> : null}
-              {data.summary.refundedCount > 0 ? <Text style={{ color: colors.textMuted, fontSize: type.small }}>{formatPaise(data.summary.refundedPaise)} refunded (not counted)</Text> : null}
-              {data.averagePerDayPaise !== null ? (
-                <Text style={{ color: colors.text, marginTop: spacing.sm }}>Average {formatPaise(data.averagePerDayPaise)} per day</Text>
-              ) : null}
+              <Text accessibilityLabel={`Total spent ${formatPaise(data.summary.totalPaise)}`} style={{ ...MONEY, color: colors.text, fontSize: type.display, fontWeight: "700", letterSpacing: -0.8 }}>
+                {formatPaise(data.summary.totalPaise)}
+              </Text>
+              <Text style={{ color: colors.textMuted, marginTop: spacing.xs, fontSize: type.small }}>
+                {data.summary.count} {data.summary.count === 1 ? "expense" : "expenses"} · {data.info.note}
+              </Text>
               {comparison ? (
-                <Text style={{ color: colors.text, marginTop: spacing.xs }}>{comparison.label}{comparison.previousPaise > 0 ? ` (${formatPaise(comparison.previousPaise)})` : ""}</Text>
+                <View style={{ flexDirection: "row", marginTop: spacing.md }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: colors.surfaceAlt, borderRadius: radii.pill, paddingHorizontal: spacing.sm + 2, paddingVertical: spacing.xs + 1, flexShrink: 1 }}>
+                    <Ionicons name={trendIcon} size={14} color={colors.text} style={{ marginRight: spacing.xs }} />
+                    <Text style={{ ...MONEY, color: colors.text, fontSize: type.caption, fontWeight: "600", flexShrink: 1 }}>
+                      {comparison.label}
+                      {comparison.previousPaise > 0 ? ` (${formatPaise(comparison.previousPaise)})` : ""}
+                    </Text>
+                  </View>
+                </View>
+              ) : null}
+              {data.averagePerDayPaise !== null || data.summary.pendingPaise > 0 || data.summary.refundedCount > 0 ? (
+                <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: spacing.md, gap: spacing.sm }}>
+                  {data.averagePerDayPaise !== null ? (
+                    <View style={{ flexGrow: 1, flexBasis: 140, backgroundColor: colors.surfaceAlt, borderRadius: radii.md, padding: spacing.md }}>
+                      <Text style={{ color: colors.textMuted, fontSize: type.caption }}>Average per day</Text>
+                      <Text style={{ ...MONEY, color: colors.text, fontSize: type.body, fontWeight: "700", marginTop: 2 }}>{formatPaise(data.averagePerDayPaise)}</Text>
+                    </View>
+                  ) : null}
+                  {data.summary.pendingPaise > 0 ? (
+                    <View style={{ flexGrow: 1, flexBasis: 140, backgroundColor: colors.surfaceAlt, borderRadius: radii.md, padding: spacing.md }}>
+                      <Text style={{ color: colors.textMuted, fontSize: type.caption }}>Pending (included)</Text>
+                      <Text style={{ ...MONEY, color: colors.text, fontSize: type.body, fontWeight: "700", marginTop: 2 }}>{formatPaise(data.summary.pendingPaise)}</Text>
+                    </View>
+                  ) : null}
+                  {data.summary.refundedCount > 0 ? (
+                    <View style={{ flexGrow: 1, flexBasis: 140, backgroundColor: colors.surfaceAlt, borderRadius: radii.md, padding: spacing.md }}>
+                      <Text style={{ color: colors.textMuted, fontSize: type.caption }}>Refunded (not counted)</Text>
+                      <Text style={{ ...MONEY, color: colors.text, fontSize: type.body, fontWeight: "700", marginTop: 2 }}>{formatPaise(data.summary.refundedPaise)}</Text>
+                    </View>
+                  ) : null}
+                </View>
               ) : null}
             </>,
             `sum of Paid and Pending expenses dated in this period; Refunded expenses are never counted. Average = total ÷ days elapsed so far (${data.info.elapsedDays}).${comparison ? ` The comparison is against the whole previous ${mode}${data.info.state === "in_progress" ? ", so a period still in progress will usually look lower" : ""}.` : ""}`,
           )}
 
           {data.summary.count === 0 ? (
-            card("No spending", <Text style={{ color: colors.textMuted }}>{data.info.state === "future" ? "This period hasn't started yet." : "No paid or pending expenses in this period."}</Text>)
+            <Card style={{ alignItems: "center", paddingVertical: spacing.xl, marginBottom: spacing.md }}>
+              <View style={{ width: 56, height: 56, borderRadius: 18, backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center", marginBottom: spacing.md }}>
+                <Ionicons name="bar-chart-outline" size={26} color={colors.onPrimarySoft} />
+              </View>
+              <Text accessibilityRole="header" style={{ color: colors.text, fontWeight: "700", fontSize: type.bodyLarge }}>
+                No spending
+              </Text>
+              <Text style={{ color: colors.textMuted, marginTop: spacing.xs, textAlign: "center", fontSize: type.body }}>
+                {data.info.state === "future" ? "This period hasn't started yet." : "No paid or pending expenses in this period."}
+              </Text>
+            </Card>
           ) : (
             <>
               {card(
                 "Trend",
                 <>
-                  <View style={{ flexDirection: "row", gap: spacing.sm, flexWrap: "wrap", marginBottom: spacing.sm }}>
-                    {(["day", "week", "month"] as const).map((g) => (
-                      <Chip key={g} label={g === "day" ? "Daily" : g === "week" ? "Weekly" : "Monthly"} selected={data.granularity === g} onPress={() => setGranularity(g)} />
-                    ))}
+                  <View style={{ marginBottom: spacing.md }}>
+                    <SegmentedControl
+                      accessibilityLabel="Trend grouping"
+                      value={data.granularity}
+                      onChange={(g) => setGranularity(g)}
+                      segments={[
+                        { value: "day", label: "Daily" },
+                        { value: "week", label: "Weekly" },
+                        { value: "month", label: "Monthly" },
+                      ]}
+                    />
                   </View>
                   {data.trend.length > 120 ? (
                     <Text style={{ color: colors.textMuted }}>Too many {data.granularity}s to draw. Pick Weekly or Monthly, or see the table.</Text>
                   ) : (
                     <View accessible accessibilityLabel={`Bar chart of spending per ${data.granularity}. Highest ${formatPaise(trendMax)}. Use Show as table for every value.`}>
                       <BarChart
-                        data={data.trend.map((p) => ({ value: p.totalPaise / 100, label: p.label, frontColor: p.partial ? colors.textMuted : colors.primary }))}
+                        data={data.trend.map((p) => ({
+                          value: p.totalPaise / 100,
+                          label: p.label,
+                          frontColor: p.partial ? colors.textFaint : colors.primary,
+                          gradientColor: p.partial ? colors.border : colors.heroEnd,
+                        }))}
+                        showGradient
                         barWidth={data.trend.length > 20 ? 8 : 18}
                         spacing={data.trend.length > 20 ? 4 : 10}
+                        barBorderTopLeftRadius={data.trend.length > 20 ? 3 : 6}
+                        barBorderTopRightRadius={data.trend.length > 20 ? 3 : 6}
                         noOfSections={3}
                         yAxisLabelWidth={48}
                         formatYLabel={(v: string) => `₹${Math.round(Number(v)).toLocaleString("en-IN")}`}
                         yAxisTextStyle={{ color: colors.textMuted, fontSize: 10 }}
                         xAxisLabelTextStyle={{ color: colors.textMuted, fontSize: 9 }}
                         xAxisColor={colors.border}
-                        yAxisColor={colors.border}
-                        rulesColor={colors.border}
+                        yAxisThickness={0}
+                        rulesType="dashed"
+                        rulesColor={colors.divider}
                         height={160}
                         isAnimated={false}
                       />
                     </View>
                   )}
-                  <Text style={{ color: colors.textMuted, fontSize: type.caption, marginTop: spacing.xs }}>
-                    Legend: <Text style={{ color: colors.primary }}>■</Text> full {data.granularity}  <Text style={{ color: colors.textMuted }}>■</Text> partial {data.granularity} (cut by the range or not over yet)
-                  </Text>
-                  <Pressable accessibilityRole="button" onPress={() => setShowTable((v) => !v)} style={{ minHeight: 44, justifyContent: "center" }}>
-                    <Text style={{ color: colors.primary, fontWeight: "700" }}>{showTable ? "Hide table" : "Show as table"}</Text>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", marginTop: spacing.sm }}>
+                    <Text style={{ color: colors.textMuted, fontSize: type.caption }}>Legend: </Text>
+                    <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: colors.primary, marginRight: spacing.xs }} />
+                    <Text style={{ color: colors.textMuted, fontSize: type.caption, marginRight: spacing.md }}>full {data.granularity}</Text>
+                    <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: colors.textFaint, marginRight: spacing.xs }} />
+                    <Text style={{ color: colors.textMuted, fontSize: type.caption }}>partial {data.granularity} (cut by the range or not over yet)</Text>
+                  </View>
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => setShowTable((v) => !v)}
+                    style={({ pressed }) => ({ minHeight: 44, flexDirection: "row", alignItems: "center", alignSelf: "flex-start", marginTop: spacing.sm, opacity: pressed ? 0.7 : 1 })}
+                  >
+                    <Ionicons name={showTable ? "chevron-up" : "list-outline"} size={16} color={colors.primary} style={{ marginRight: spacing.xs }} />
+                    <Text style={{ color: colors.primary, fontWeight: "600", fontSize: type.body }}>{showTable ? "Hide table" : "Show as table"}</Text>
                   </Pressable>
                   {showTable
                     ? data.trend.map((p) => (
-                        <View key={p.key} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 4, borderTopWidth: 1, borderTopColor: colors.border }}>
-                          <Text style={{ color: colors.text, flex: 1 }}>{p.longLabel}{p.partial ? " (partial)" : ""}</Text>
-                          <Text style={{ color: colors.text }}>{formatPaise(p.totalPaise)}</Text>
+                        <View key={p.key} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: spacing.sm, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.divider }}>
+                          <Text style={{ color: colors.text, flex: 1, fontSize: type.small }}>
+                            {p.longLabel}
+                            {p.partial ? " (partial)" : ""}
+                          </Text>
+                          <Text style={{ ...MONEY, color: colors.text, fontSize: type.small, fontWeight: "600" }}>{formatPaise(p.totalPaise)}</Text>
                         </View>
                       ))
                     : null}

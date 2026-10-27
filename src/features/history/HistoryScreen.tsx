@@ -2,11 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { EmptyState } from "../../components/EmptyState";
-import { Fab } from "../../components/Fab";
 import { TransactionRow } from "../../components/TransactionRow";
 import { useRepositories } from "../../db/DatabaseProvider";
 import { Category } from "../../repo/categories";
@@ -14,6 +13,7 @@ import { Merchant } from "../../repo/merchants";
 import { MAX_LIST_LIMIT, SpendingSummary, TransactionWithDetails } from "../../repo/transactions";
 import { useFormatDate } from "../../state/AppSettings";
 import { useDataVersion } from "../../state/dataEvents";
+import { MONEY } from "../../theme/tokens";
 import { useTheme } from "../../theme/useTheme";
 import { todayLocal } from "../../utils/date";
 import { formatPaise } from "../../utils/money";
@@ -90,63 +90,111 @@ export function HistoryScreen() {
   const filtered = hasAnyFilter({ ...filters, search: searchText });
 
   const renderItem = useCallback(
-    ({ item }: { item: Item }) =>
-      item.type === "header" ? (
-        <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.xs, backgroundColor: colors.background }}>
-          <Text style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "700" }}>{item.label}</Text>
-          <Text style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "700" }}>{formatPaise(item.dayTotalPaise)}</Text>
+    ({ item, index }: { item: Item; index: number }) => {
+      if (item.type === "header") {
+        return (
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", paddingHorizontal: spacing.lg + spacing.xs, paddingTop: spacing.lg, paddingBottom: spacing.sm, backgroundColor: colors.background }}>
+            <Text accessibilityRole="header" style={{ color: colors.textMuted, fontSize: type.small, fontWeight: "600", letterSpacing: 0.4, textTransform: "uppercase" }}>
+              {item.label}
+            </Text>
+            <Text style={{ ...MONEY, color: colors.textMuted, fontSize: type.small, fontWeight: "600" }}>{formatPaise(item.dayTotalPaise)}</Text>
+          </View>
+        );
+      }
+      const prev = items[index - 1];
+      const next = items[index + 1];
+      const first = !prev || prev.type === "header";
+      const last = !next || next.type === "header";
+      return (
+        <View style={{ paddingHorizontal: spacing.lg, backgroundColor: colors.background, paddingTop: first && !prev ? spacing.md : 0 }}>
+          <View
+            style={{
+              backgroundColor: colors.surface,
+              overflow: "hidden",
+              borderTopLeftRadius: first ? radii.lg : 0,
+              borderTopRightRadius: first ? radii.lg : 0,
+              borderBottomLeftRadius: last ? radii.lg : 0,
+              borderBottomRightRadius: last ? radii.lg : 0,
+              borderLeftWidth: StyleSheet.hairlineWidth,
+              borderRightWidth: StyleSheet.hairlineWidth,
+              borderTopWidth: first ? StyleSheet.hairlineWidth : 0,
+              borderBottomWidth: last ? StyleSheet.hairlineWidth : 0,
+              borderColor: colors.border,
+            }}
+          >
+            <TransactionRow transaction={item.transaction} onPress={openExpense} />
+            {!last ? <View style={{ height: StyleSheet.hairlineWidth, backgroundColor: colors.divider, marginLeft: 72 }} /> : null}
+          </View>
         </View>
-      ) : (
-        <TransactionRow transaction={item.transaction} onPress={openExpense} />
-      ),
-    [colors, spacing, type, openExpense],
+      );
+    },
+    [colors, spacing, type, radii, items, openExpense],
   );
 
   const header = (
-    <View style={{ paddingTop: insets.top + spacing.sm, paddingHorizontal: spacing.lg, paddingBottom: spacing.sm, backgroundColor: colors.background }}>
-      <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.headline, fontWeight: "700", marginBottom: spacing.md }}>History</Text>
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <View style={{ flex: 1, flexDirection: "row", alignItems: "center", height: 48, borderRadius: radii.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, paddingHorizontal: spacing.md }}>
-          <Ionicons name="search" size={18} color={colors.textMuted} />
-          <TextInput
-            accessibilityLabel="Search expenses"
-            value={searchText}
-            onChangeText={setSearchText}
-            placeholder="Search description, merchant, notes"
-            placeholderTextColor={colors.textMuted}
-            style={{ flex: 1, marginLeft: spacing.sm, color: colors.text, fontSize: type.body }}
-            returnKeyType="search"
-          />
-          {searchText ? (
-            <Pressable accessibilityRole="button" accessibilityLabel="Clear search" hitSlop={10} onPress={() => setSearchText("")}>
-              <Ionicons name="close-circle" size={18} color={colors.textMuted} />
-            </Pressable>
-          ) : null}
-        </View>
+    <View style={{ paddingTop: insets.top + spacing.md, paddingHorizontal: spacing.lg, paddingBottom: spacing.sm, backgroundColor: colors.background }}>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.md }}>
+        <Text accessibilityRole="header" style={{ color: colors.text, fontSize: type.headline, fontWeight: "800", letterSpacing: -0.6 }}>
+          History
+        </Text>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={`Filter and sort${filterCount ? `, ${filterCount} active` : ""}`}
           onPress={() => setSheetOpen(true)}
-          style={{ height: 48, marginLeft: spacing.sm, paddingHorizontal: spacing.md, borderRadius: radii.md, borderWidth: 1, borderColor: filterCount ? colors.primary : colors.border, backgroundColor: colors.surface, flexDirection: "row", alignItems: "center" }}
+          hitSlop={4}
+          style={({ pressed }) => ({
+            height: 44,
+            minWidth: 44,
+            paddingHorizontal: filterCount ? spacing.md : 0,
+            borderRadius: radii.pill,
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "row",
+            backgroundColor: filterCount ? colors.primarySoft : pressed ? colors.surfaceAlt : colors.surface,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: filterCount ? colors.primary : colors.border,
+          })}
         >
-          <Ionicons name="options-outline" size={20} color={filterCount ? colors.primary : colors.text} />
-          {filterCount ? <Text style={{ color: colors.primary, fontWeight: "700", marginLeft: spacing.xs }}>{filterCount}</Text> : null}
+          <Ionicons name="options-outline" size={20} color={filterCount ? colors.onPrimarySoft : colors.text} />
+          {filterCount ? <Text style={{ color: colors.onPrimarySoft, fontWeight: "700", marginLeft: spacing.xs, fontSize: type.small }}>{filterCount}</Text> : null}
         </Pressable>
       </View>
+      <View style={{ flexDirection: "row", alignItems: "center", height: 48, borderRadius: 14, backgroundColor: colors.surfaceAlt, paddingHorizontal: spacing.md }}>
+        <Ionicons name="search" size={18} color={colors.textMuted} />
+        <TextInput
+          accessibilityLabel="Search expenses"
+          value={searchText}
+          onChangeText={setSearchText}
+          placeholder="Search description, merchant, notes"
+          placeholderTextColor={colors.textFaint}
+          style={{ flex: 1, marginLeft: spacing.sm, color: colors.text, fontSize: type.body }}
+          returnKeyType="search"
+        />
+        {searchText ? (
+          <Pressable accessibilityRole="button" accessibilityLabel="Clear search" hitSlop={10} onPress={() => setSearchText("")}>
+            <Ionicons name="close-circle" size={18} color={colors.textMuted} />
+          </Pressable>
+        ) : null}
+      </View>
       {rows && summary && totalEver ? (
-        <View style={{ flexDirection: "row", alignItems: "center", marginTop: spacing.md }}>
+        <View style={{ flexDirection: "row", alignItems: "center", marginTop: spacing.md, paddingHorizontal: spacing.xs }}>
           <View style={{ flex: 1 }}>
             <Text style={{ color: colors.text, fontSize: type.body, fontWeight: "600" }}>
-              {rows.length} {rows.length === 1 ? "expense" : "expenses"} · {formatPaise(summary.totalPaise)}
+              {rows.length} {rows.length === 1 ? "expense" : "expenses"} · <Text style={MONEY}>{formatPaise(summary.totalPaise)}</Text>
             </Text>
-            <Text style={{ color: colors.textMuted, fontSize: type.caption }}>
+            <Text style={{ color: colors.textMuted, fontSize: type.caption, marginTop: 2 }}>
               {SORT_LABELS[filters.sort]}
               {summary.refundedCount ? ` · ${summary.refundedCount} refunded not counted` : ""}
             </Text>
           </View>
           {filtered ? (
-            <Pressable accessibilityRole="button" onPress={clearAll} hitSlop={10}>
-              <Text style={{ color: colors.primary, fontWeight: "700" }}>Clear filters</Text>
+            <Pressable
+              accessibilityRole="button"
+              onPress={clearAll}
+              hitSlop={10}
+              style={{ paddingHorizontal: spacing.md, minHeight: 32, justifyContent: "center", borderRadius: radii.pill, backgroundColor: colors.primarySoft }}
+            >
+              <Text style={{ color: colors.onPrimarySoft, fontWeight: "600", fontSize: type.small }}>Clear filters</Text>
             </Pressable>
           ) : null}
         </View>
@@ -160,7 +208,7 @@ export function HistoryScreen() {
   } else if (!rows || totalEver === null) {
     body = <ActivityIndicator style={{ marginTop: spacing.xxl }} size="large" color={colors.primary} />;
   } else if (totalEver === 0) {
-    body = <EmptyState icon="receipt-outline" title="No expenses yet" message="Tap “Add expense” to record your first one." />;
+    body = <EmptyState icon="receipt-outline" title="No expenses yet" message="Tap the + button below to record your first one." />;
   } else if (rows.length === 0) {
     body = <EmptyState icon="search-outline" title="No matching expenses" message="Try a different search or clear the filters." actionLabel="Clear filters" onAction={clearAll} />;
   } else {
@@ -171,7 +219,7 @@ export function HistoryScreen() {
         keyExtractor={(item) => item.key}
         getItemType={(item) => item.type}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingBottom: 96 }}
+        contentContainerStyle={{ paddingBottom: 112 }}
       />
     );
   }
@@ -180,7 +228,6 @@ export function HistoryScreen() {
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       {header}
       <View style={{ flex: 1 }}>{body}</View>
-      <Fab onPress={() => router.push("/expense/new")} />
       <FilterSheet
         visible={sheetOpen}
         filters={filters}
